@@ -1,0 +1,288 @@
+
+Q -  Largest Number
+
+Given an array A of non-negative integers,
+ arrange them such that they form the largest number.
+
+Note: The result may be very large, 
+so you need to return a string instead of an integer.
+
+Problem Constraints
+
+1 <= len(A) <= 100000
+0 <= A[i] <= 2*109
+
+Example Input
+
+Input 1:
+
+ A = [3, 30, 34, 5, 9]
+Input 2:
+
+ A = [2, 3, 9, 0]
+
+
+Example Output
+
+Output 1:
+
+ "9534330"
+
+Output 2:
+
+ "9320"
+
+
+Approach - 
+
+Sorting all numbers in descending order is the simplest solution that occurs to us.
+But this doesn’t work. 
+
+For example, 548 is greater than 60, but in the output,
+ 60 comes before 548.
+As a second example, 98 is greater than 9,
+ but 9 comes before 98 in the output.
+
+The solution is to use any comparison-based sorting algorithm.
+ Thus, instead of using the default comparison, 
+ write a comparison function myCompare() and use it to sort numbers. 
+
+Given two numbers, X and Y, how should myCompare()
+ decide which number to put first – we compare two numbers XY
+  (Y appended at the end of X) and YX (X appended at the end of Y). 
+
+If XY is greater, then, in the output, 
+X should come before Y, else Y should come before X. 
+
+For example, let X and Y be 542 and 60.
+ To compare X and Y, we compare 54260 and 60542. 
+ Since 60542 is greater than 54260, we put Y first.
+
+Code - 
+
+public class Solution {
+    public String largestNumber(int[] A) {
+        
+        Integer[] updated = new Integer[A.length];
+
+        for( int i=0; i<A.length; i++){
+            updated[i] = A[i];
+
+        }
+
+
+        Arrays.sort(updated, new largestComparator());
+
+        if(updated[0] == 0){
+            return new String("0");
+        }
+
+        StringBuilder ans = new StringBuilder();
+
+        for(int a: updated){
+            ans.append(a);
+        }
+
+        return ans.toString();
+    }
+}
+
+class largestComparator implements Comparator<Integer> {
+
+    @Override
+    public int compare(Integer a, Integer b){
+        String order1 = a.toString() + b.toString();
+        String order2 = b.toString() + a.toString();
+
+        return order2.compareTo(order1);
+    }
+}
+
+
+Q - Factors sort
+
+You are given an array A of N elements. 
+Sort the given array in increasing order of number of distinct factors
+ of each element, i.e., element having the least number of
+  factors should be the first to be displayed and the number 
+  having highest number of factors should be the last one. 
+  If 2 elements have same number of factors, then number with less 
+  value should come first.
+
+Note: You cannot use any extra space
+
+Problem Constraints
+
+1 <= N <= 104
+1 <= A[i] <= 104
+
+Example Input
+
+Input 1:
+A = [6, 8, 9]
+Input 2:
+A = [2, 4, 7]
+
+
+Example Output
+
+Output 1:
+[9, 6, 8]
+Output 2:
+[2, 7, 4]
+
+
+Appraoch - 
+
+BF - 
+
+Count factors for each element.
+Create a new array with [element, factor count] pairs.
+Sort this new array based on factor count (and value if counts are equal).
+Extract the sorted elements.
+
+
+Optimization - using custom comparator 
+
+Code - 
+
+public class Solution {
+    public int[] solve(int[] A) {
+        
+        Integer[] updated = new Integer[A.length];
+
+        for(int i=0; i<A.length; i++){
+            updated[i] = A[i];
+        }
+        Arrays.sort(updated, new FactorsComparator());
+     
+
+             for(int i=0; i<A.length; i++){
+            A[i] = (int) updated[i];
+        }
+
+
+        return A;
+    }
+}
+
+
+class FactorsComparator implements Comparator<Integer>{
+
+
+    public int cntFactors(int n){
+
+        int cnt=0;
+        
+
+        for(int i=1; i*i<=n; i++){
+
+            if(n%i == 0){
+
+               int b = n/i;
+
+                if( i == b){
+                    cnt++;
+                }else{
+                    cnt = cnt +2;
+                }
+            }
+        }
+
+        return cnt;
+    }
+
+    @Override
+    public int compare(Integer a, Integer b){
+
+        int factorsA = cntFactors(a);
+        int factorsB = cntFactors(b);
+
+        if(factorsA < factorsB){
+            return -1;
+        }else if( factorsA > factorsB){
+            return 1;
+        }else{
+
+           if( a<b) return -1;
+           else if(a>b) return 1;
+           else return 0;
+        }
+    }
+}
+
+
+Q - Quick Sort
+
+Given an integer array A, sort the array using Quick Sort.
+
+Problem Constraints
+
+1 <= |A| <= 10^5
+1 <= A[i] <= 10^9
+
+Example Input
+
+Input 1:-
+A = [1, 4, 10, 2, 1, 5]
+Input 2:-
+A = [3, 7, 1]
+
+
+Example Output
+
+Output 1:-
+[1, 1, 2, 4, 5, 10]
+Output 2:-
+[1, 3, 7]
+
+Code - 
+
+ public int[] solve(int[] A) {
+
+        quickSort(A, 0, A.length-1);
+
+        return A;
+
+    }
+
+    public void quickSort(int[] A, int l, int r){
+
+        if( l < r){
+            int pi = quickSelect(A, l, r);
+            quickSort(A, l, pi-1);
+            quickSort(A, pi+1, r);
+        }
+    }
+
+    public int quickSelect(int[] A, int l, int r){
+
+        int pi = A[l];
+        int left=l+1;
+        int right = r;
+
+
+        while( left <= right){
+
+            if(A[left] < pi) left++;
+            else if( A[right] > pi) right--;
+            else{
+                swap(A, left, right);
+                left++;
+                right--;
+            }
+
+
+        }
+
+            swap(A, l, right);
+            return right;
+    }
+
+    public void swap(int[] A, int left, int right){
+        int temp = A[left];
+        A[left]= A[right];
+        A[right] = temp;
+    }
+
+    
