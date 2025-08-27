@@ -194,5 +194,53 @@ Optimized code -
     }
 
 
+Q -  Partition Index
 
+Given an integer array A of length N, considering the last element as pivot p, rearrange the elements such that for all i:
+
+if A[i] < p then it should be present on left side of the partition
+if A[i] > p then it should be present on right side of the partition
+Rearrange the given array as well as return the partition index.
+
+Note: All elements are distinct
+
+
+
+Problem Constraints
+
+1 ≤ N ≤ 105
+
+1 ≤ A[i] ≤ 109
+
+
+Appraoch - write the partition logic where pivot will be the last element.
+
+Code - 
+
+  public int partition(int[] arr) {
+        
+     int pIndex=0;
+     int pivot = arr[arr.length-1];
+
+        for(int i=0; i <= arr.length-2; i++){
+
+            if( arr[i]<=pivot){
+                swap(arr, i, pIndex);
+                pIndex++;
+            }
+        }
+
+        swap(arr, pIndex, arr.length-1);
+
+        return pIndex;
+
+    }
+
+    public static void swap(int[] a, int l, int r){
+        int temp = a[l];
+        a[l] = a[r];
+        a[r] = temp;
+    }
+
+    
     
