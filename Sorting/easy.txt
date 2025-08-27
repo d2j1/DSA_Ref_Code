@@ -471,3 +471,69 @@ class Point {
     public int x;
     public int y;
 }
+
+
+Q -  Sort 01
+
+Given an array A of 0s and 1s of length N. Sort this array.
+
+Note - Do not use any sorting algorithm or library's sort method.
+
+
+
+Problem Constraints
+
+1 ≤ N ≤ 105
+
+0 ≤ A[i] ≤ 1
+
+Example Input
+
+Input 1:
+
+A = [0,0,1,0,1,1,0]
+Input 2:
+
+A = [1,0]
+
+
+Example Output
+
+Output 1:
+
+[0,0,0,0,1,1,1]
+Output 2:
+
+[0,1]
+
+Approach - as there are only two elements use Count sort.
+
+Code - 
+
+public class Solution {
+    public int[] sort01(int[] A) {
+
+        int[] cnt = new int[2];
+
+        for(int i=0; i<A.length; i++){
+            cnt[A[i]]++;
+        }
+
+        int k=0;
+        
+        for(int i =0; i < 2; i++){
+
+            for( int j=0; j<cnt[i]; j++){
+                A[k++] = i;
+            }
+        }
+
+        return A;
+
+    }
+}
+
+
+
+
+
