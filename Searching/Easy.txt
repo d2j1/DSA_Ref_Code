@@ -69,3 +69,152 @@ public class Solution {
 }
 
 
+Q - Maximum height of staircase
+
+
+Given an integer A representing the number of square blocks. The height of each square block is 1. The task is to create a staircase of max-height using these blocks.
+
+The first stair would require only one block, and the second stair would require two blocks, and so on.
+
+Find and return the maximum height of the staircase.
+
+
+
+Problem Constraints
+
+0 <= A <= 109
+
+
+Example Input
+
+Input 1:
+
+ A = 10
+Input 2:
+
+ A = 20
+
+
+Example Output
+
+Output 1:
+
+ 4
+Output 2:
+
+ 5
+
+
+Example Explanation
+
+Explanation 1:
+
+ The stairs formed will have height 1, 2, 3, 4.
+Explanation 2:
+
+ The stairs formed will have height 1, 2, 3, 4, 5.
+
+
+ Approach - 
+
+use binary search - 
+
+Take range from 0 to input no and in this range find out the sum of first n 
+natural nos, here n being mid of the range. 
+
+Code - 
+
+ public int solve(int A) {
+        
+        long lo=0, hi = A;
+
+        while(lo <= hi){
+
+            long mid = (lo+hi)/2;
+            long sum = mid * (mid+1) /2;
+
+            if(sum == A){
+                return (int)mid;
+            }else if( sum < A){
+                lo=mid+1;
+            }else{
+                hi = mid-1;
+            }
+
+        }
+
+        return (int) lo-1;
+    }
+
+
+Q -  Square Root of Integer
+
+Given an integer A. Compute and return the square root of A.
+If A is not a perfect square, return floor(sqrt(A)).
+
+NOTE: 
+   The value of A*A can cross the range of Integer.
+   Do not use the sqrt function from the standard library. 
+   Users are expected to solve this in O(log(A)) time.
+
+
+Problem Constraints
+
+0 <= A <= 109
+
+Example Input
+
+Input 1:
+
+ 11
+Input 2:
+
+ 9
+
+
+Example Output
+
+Output 1:
+
+ 3
+Output 2:
+
+ 3
+
+
+Example Explanation
+
+Explanation 1:
+When A = 11 , square root of A = 3.316. It is not a perfect square so we return the floor which is 3.
+Explanatino 2:
+When A = 9 which is a perfect square of 3, so we return 3.
+
+Appraoch  - use binary search on ans space.
+
+Code - 
+
+ public int sqrt(int A) {
+
+
+        long lo=1,hi=A;  
+        int ans=0;
+
+        while(lo <= hi){
+
+            long mid = (lo + hi)/2;
+
+            if( mid * mid == A){
+                return (int)mid;
+            }else if( mid * mid < A ){
+                lo = mid+1;
+                ans = (int)mid;
+            }else{
+                hi = mid-1;
+            }
+        }
+
+        return ans;
+    }
+
+
+    
