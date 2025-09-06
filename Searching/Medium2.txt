@@ -1,0 +1,334 @@
+
+Q - Ath Magical Number
+
+You are given three positive integers, A, B, and C.
+
+Any positive integer is magical if divisible by either B or C.
+
+Return the Ath smallest magical number. Since the answer may be very large, return modulo 109 + 7.
+
+Note: Ensure to prevent integer overflow while calculating.
+
+
+
+Problem Constraints
+
+1 <= A <= 109
+
+2 <= B, C <= 40000
+
+
+
+Input Format
+
+The first argument given is an integer A.
+
+The second argument given is an integer B.
+
+The third argument given is an integer C.
+
+
+
+Output Format
+
+Return the Ath smallest magical number. Since the answer may be very large, return modulo 109 + 7.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 1
+ B = 2
+ C = 3
+Input 2:
+
+ A = 4
+ B = 2
+ C = 3
+
+
+Example Output
+
+Output 1:
+
+ 2
+Output 2:
+
+ 6
+
+
+Example Explanation
+
+Explanation 1:
+
+ 1st magical number is 2.
+Explanation 2:
+
+ First four magical numbers are 2, 3, 4, 6 so the 4th magical number is 6.
+
+ Approach - 
+
+ Say L = lcm(B, C), the least common multiple of B and C, and let f(x) be the number of magical numbers less than or equal to x.
+
+A well known result says that L = (B*C)/gcd(B,C), and that we can calculate the function gcd.
+Then f(x) = x/B + x/C - x/L (floor of all the divisions)
+
+Why?
+
+There are x/B numbers B, 2B, 3B.... that are divisible by B,
+There are x/C numbers C, 2C, 3C.... that are divisible by C,
+We need to subtract the x/L numbers divisible by B and C that we double-counted.
+
+Finally,the answer must be between 0 and A * min(B,C).
+
+If x increases f(x) increases, we can use Binary Search on x to find the Ath number.
+
+Algorithm:
+
+low=1 and high = A * min(B,C)
+while low <= high
+Find mid = (low + high)/2
+Find f(mid) let it be count
+If count>=A then mark it as a answer and try to find smaller number which implies high = mid-1
+Else low = mid+1
+
+Time Complexity: O(log (A * min(B, C))) Space Complexity: O(1).
+
+
+Code - 
+
+public class Solution {
+    public int solve(int A, int B, int C) {
+        long lo = Math.min(B, C);
+        long hi = (long)A * Math.min(B, C);
+        long ans = lo;
+        int mod = 1000000007;
+
+        while (lo <= hi) {
+            long mid = lo + (hi - lo) / 2;
+
+            long lcm = lcm(B, C);
+            long cnt = mid / B + mid / C - mid / lcm;
+
+            if (cnt < A) {
+                lo = mid + 1;
+            } else {
+                ans = mid;
+                hi = mid - 1;
+            }
+        }
+
+        return (int)(ans % mod);
+    }
+
+    private long gcd(long a, long b) {
+        if (b == 0) return a;
+        return gcd(b, a % b);
+    }
+
+    private long lcm(long a, long b) {
+        return a / gcd(a, b) * b;
+    }
+}
+
+Q -  Find Smallest Again
+
+
+Given an integer array A of size N.
+
+If we store the sum of each triplet of the array A in a new list, then find the Bth smallest element among the list.
+
+NOTE: A triplet consists of three elements from the array. Let's say if A[i], A[j], A[k] are the elements of the triplet then i < j < k.
+
+
+
+Problem Constraints
+
+3 <= N <= 500
+1 <= A[i] <= 108
+1 <= B <= (N*(N-1)*(N-2))/6
+
+
+
+Input Format
+
+The first argument is an integer array A.
+The second argument is an integer B.
+
+
+
+Output Format
+
+Return an integer denoting the Bth element of the list.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [2, 4, 3, 2]
+ B = 3
+Input 2:
+
+ A = [1, 5, 7, 3, 2]
+ B = 9
+
+
+Example Output
+
+Output 1:
+
+ 9 
+Output 2:
+
+ 14
+
+
+Example Explanation
+
+Explanation 1:
+
+ All the triplets of the array A are:
+
+ (2, 4, 3) = 9
+ (2, 4, 2) = 8
+ (2, 3, 2) = 7
+ (4, 3, 2) = 9
+
+ So the 3rd smallest element is 9.
+
+ BF - 
+
+ Find out all the triplets of the array.
+ Find sum of all these triplets.
+ sort the sum of all triplets.
+ and return the B-1 value from sorted sum array.
+
+TC - O(n^3 logn^3)
+SC - O(n^3)
+
+Optimization - 
+Why not brute force?
+
+Number of triplets = N choose 3 = ~N³/6.
+
+For N=500, this is about 20 million triplets.
+
+Generating and sorting all is possible but slow and memory heavy.
+
+So we need a smarter way.
+
+Key trick
+
+Instead of building the list of triplet sums, we binary search on the answer.
+
+Minimum possible sum = three smallest numbers.
+
+Maximum possible sum = three largest numbers.
+
+Guess a number mid in between → check how many triplets have sum ≤ mid.
+
+If that count is at least B, then the answer is ≤ mid.
+
+Else, the answer is bigger.
+
+Continue narrowing until we find the exact B-th smallest sum.
+
+How to count triplets ≤ X (efficiently)
+
+Sort the array.
+
+Fix the first element (A[i]).
+
+Use two pointers for the next two elements:
+
+left = i+1, right = n-1.
+
+If A[i]+A[left]+A[right] ≤ X, then all triplets between left and right are valid (because array is sorted). Add (right-left) to count, move left++.
+
+Else, move right-- to reduce the sum.
+
+Repeat for all i.
+
+This gives the count in O(N²).
+
+Binary search + counting
+
+Binary search over possible sum values.
+
+Each step: call the counting method.
+
+Finally, we get the smallest sum such that at least B triplets are ≤ it.
+That’s exactly the B-th smallest triplet sum.
+
+Code - 
+
+
+public class Solution {
+    public int solve(int[] A, int B) {
+
+        Arrays.sort(A);
+        int n = A.length;
+
+        long low = (long) A[0] + A[1]+ A[2]; //low limit
+        long high = (long) A[n-1] + A[n-2] + A[n-3]; // high limit
+
+        int ans=0;
+
+
+        while( low <= high){
+
+            long mid = (low+high)/2;
+
+            long cnt = countTriplets(A, mid);
+
+            if( cnt >= B){
+                ans = (int) mid;
+                high = mid -1;
+            }else{
+                low = mid+1;
+            }
+        }
+
+        return ans;
+
+    }
+
+
+    public static long countTriplets(int[] A, long x){
+
+        int n = A.length;
+        long count =0;
+
+        for(int i=0; i<n-2; i++){
+
+            for( int j=i+1; j < n-1; j++){
+
+                int left = j+1, right = n-1, pos=j;
+
+
+                while( left<= right){
+
+                    int mid = (left+right)/2;
+
+                    if((long) A[i] + A[j] +  A[mid] <= x){
+                        pos = mid;
+                        left = mid+1;
+                    }else{
+                        right = mid-1;
+                    }
+                }
+
+                count += (pos-j);
+
+            }
+        }
+
+        return count;
+    }
+}
+
+
