@@ -1,0 +1,331 @@
+Q - Insert in Linked List
+
+You are given A which is the head of a linked list. Also given is the value B and position C. Complete the function that should insert a new node with the said value at the given position.
+
+Notes:
+
+In case the position is more than length of linked list, simply insert the new node at the tail only.
+In case the pos is 0, simply insert the new node at head only.
+Follow 0-based indexing for the node numbering.
+
+
+Problem Constraints
+
+0 <= size of linked list <= 105
+
+1 <= value of nodes <= 109
+
+1 <= B <= 109
+
+0 <= C <= 105
+
+
+
+Input Format
+
+The first argument A is the head of a linked list.
+
+The second argument B is an integer which denotes the value of the new node
+
+The third argument C is an integer which denotes the position of the new node
+
+
+
+Output Format
+
+Return the head of the linked list
+
+
+Example Input
+
+Input 1:
+A = 1 -> 2
+B = 3
+C = 0
+Input 2:
+A = 1 -> 2
+B = 3
+C = 1
+
+
+Example Output
+
+Output 1:
+3 -> 1 -> 2
+Output 2:
+1 -> 3 -> 2
+
+
+Example Explanation
+
+For Input 1:
+The new node is add to the head of the linked list
+For Input 2:
+The new node is added after the first node of the linked list
+
+
+Code - 
+
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     ListNode(int x) { val = x; next = null; }
+ * }
+ */
+public class Solution {
+    public ListNode solve(ListNode A, int B, int C) {
+
+        ListNode newNode = new ListNode(B);
+
+      if(A==null){
+          A = newNode;
+          return A;
+      }
+
+    
+
+      if( C == 0){
+          newNode.next = A;
+          return newNode;
+      }
+
+    ListNode temp = A;  
+        boolean isReachedEnd=false;
+
+        for( int i=0; i<C-1; i++){
+            if(temp.next == null){
+                isReachedEnd=true;
+                break;
+            }
+            temp = temp.next;
+        }
+
+        if( isReachedEnd ){
+            temp.next = newNode;
+            return A;
+        }else{
+            newNode.next = temp.next;
+            temp.next = newNode;
+            return A;
+        }
+
+
+
+    }
+}
+
+
+Q - Delete in Linked List
+
+You are given the head of a linked list A and an integer B. Delete the B-th node from the linked list.
+
+Note : Follow 0-based indexing for the node numbering.
+
+
+
+Problem Constraints
+
+1 <= size of linked list <= 105
+1 <= value of nodes <= 109
+0 <= B < size of linked list
+
+
+
+
+Input Format
+
+The first argument A is the head of a linked list.
+
+The second arguement B is an integer.
+
+
+
+Output Format
+
+Return the head of the linked list after deletion
+
+
+
+Example Input
+
+Input 1:
+A = 1 -> 2 -> 3
+B = 1
+Input 2:
+A = 4 -> 3 -> 2 -> 1
+B = 0
+
+
+Example Output
+
+Output 1:
+1 -> 3
+Output 2:
+3 -> 2 -> 1
+
+
+Example Explanation
+
+For Input 1:
+The linked list after deletion is 1 -> 3.
+For Input 2:
+The linked list after deletion is 3 -> 2 -> 1.
+
+
+Code - 
+
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     ListNode(int x) { val = x; next = null; }
+ * }
+ */
+public class Solution {
+    public ListNode solve(ListNode A, int B) {
+
+
+        ListNode temp = A;
+
+        if( A == null ){
+            return A;
+        }
+
+        if(B==0){
+            return temp.next;
+        }
+
+        for(int i=0; i< B-1; i++){
+            temp = temp.next;
+        }
+
+        // 1, 17
+        temp.next = temp.next.next;
+
+        return A;
+    }
+}
+
+
+Q - Reverse Linked List
+
+You are given a singly linked list having head node A. You have to reverse the linked list and return the head node of that reversed list.
+
+NOTE: You have to do it in-place and in one-pass.
+
+
+
+Problem Constraints
+
+1 <= Length of linked list <= 105
+
+Value of each node is within the range of a 32-bit integer.
+
+
+
+Input Format
+
+First and only argument is a linked-list node A.
+
+
+
+Output Format
+
+Return a linked-list node denoting the head of the reversed linked list.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 1 -> 2 -> 3 -> 4 -> 5 -> NULL 
+Input 2:
+
+ A = 3 -> NULL 
+
+
+Example Output
+
+Output 1:
+
+ 5 -> 4 -> 3 -> 2 -> 1 -> NULL 
+Output 2:
+
+ 3 -> NULL 
+
+
+Example Explanation
+
+Explanation 1:
+
+ The linked list has 5 nodes. After reversing them, the list becomes : 5 -> 4 -> 3 -> 2 -> 1 -> NULL 
+Expalantion 2:
+
+ The linked list consists of only a single node. After reversing it, the list becomes : 3 -> NULL 
+
+ Approach - 
+
+We want to reverse the direction of links between nodes. Normally, each node points to its next. After reversing, each node should point to its previous node.
+
+To achieve this, we keep track of three pointers while traversing:
+
+prev → keeps track of the previous node (initially null because the new last node will point to nothing).
+
+curr → the current node we are processing.
+
+next → temporarily stores the next node, so we don’t lose the rest of the list when we break links.
+
+🔄 Steps of the Algorithm
+
+Initialize:
+
+prev = null
+
+curr = head
+
+While curr != null:
+
+Save the next node:
+next = curr.next
+
+Reverse the link:
+curr.next = prev
+
+Move prev forward:
+prev = curr
+
+Move curr forward:
+curr = next
+
+When the loop ends, prev will be the new head of the reversed list.
+
+
+ Code -  
+
+ /**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     ListNode(int x) { val = x; next = null; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseList(ListNode A) {
+
+        ListNode prev=null, curr=A, nxt=null;
+
+        while( curr != null){
+            nxt = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nxt;
+        }
+
+        return prev;
+    }
+}
