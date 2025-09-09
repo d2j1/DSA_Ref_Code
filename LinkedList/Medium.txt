@@ -105,4 +105,117 @@ public class Solution {
     }
 }
 
+Q -  Reverse Link List II
+
+
+Reverse a linked list A from position B to C.
+
+NOTE: Do it in-place and in one-pass.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 106
+
+1 <= B <= C <= |A|
+
+
+
+Input Format
+
+The first argument contains a pointer to the head of the given linked list, A.
+
+The second arugment contains an integer, B.
+
+The third argument contains an integer C.
+
+
+
+Output Format
+
+Return a pointer to the head of the modified linked list.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 1 -> 2 -> 3 -> 4 -> 5
+ B = 2
+ C = 4
+
+Input 2:
+
+ A = 1 -> 2 -> 3 -> 4 -> 5
+ B = 1
+ C = 5
+
+
+Example Output
+
+Output 1:
+
+ 1 -> 4 -> 3 -> 2 -> 5
+Output 2:
+
+ 5 -> 4 -> 3 -> 2 -> 1
+
+
+Example Explanation
+
+Explanation 1:
+
+ In the first example, we want to reverse the highlighted part of the given linked list : 1 -> 2 -> 3 -> 4 -> 5 
+ Thus, the output is 1 -> 4 -> 3 -> 2 -> 5 
+Explanation 2:
+
+ In the second example, we want to reverse the highlighted part of the given linked list : 1 -> 4 -> 3 -> 2 -> 5  
+ Thus, the output is 5 -> 4 -> 3 -> 2 -> 1 
+
+
+ Appraoch - Reverse nodes from B to C and then join this reversed part to the 
+ original linkedlist.
+
+ Code - 
+
+ /**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     public int val;
+ *     public ListNode next;
+ *     ListNode(int x) { val = x; next = null; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseBetween(ListNode A, int B, int C) {
+
+        if (A == null || B == C) {
+            return A;
+        }
+
+        ListNode dummy = new ListNode(-1);
+        dummy.next = A;
+        ListNode prev = dummy;
+
+        for (int i = 0; i < B - 1; i++) {
+            prev = prev.next;
+        }
+
+        ListNode start = prev.next;
+        ListNode then = start.next;
+
+        for (int i = 0; i < C - B; i++) {
+            start.next = then.next;
+            then.next = prev.next;
+            prev.next = then;
+            then = start.next;
+        }
+
+        return dummy.next;
+    }
+}
+
+
 
