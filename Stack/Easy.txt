@@ -1,0 +1,652 @@
+Q -  Passing game
+
+There is a football event going on in your city. In this event, you are given A passes and players having ids between 1 and 106.
+
+
+Initially, some player with a given id had the ball in his possession. You have to make a program to display the id of the player who possessed the ball after exactly A passes.
+
+There are two kinds of passes:
+
+1) ID
+
+2) 0
+
+For the first kind of pass, the player in possession of the ball passes the ball "forward" to the player with id = ID.
+
+For the second kind of pass, the player in possession of the ball passes the ball back to the player who had forwarded the ball to him.
+
+In the second kind of pass "0" just means Back Pass.
+
+Return the ID of the player who currently possesses the ball.
+
+
+
+
+Problem Constraints
+
+1 <= A <= 100000
+
+
+1 <= B <= 100000
+
+|C| = A
+
+
+
+Input Format
+
+The first argument of the input contains the number A.
+
+
+The second argument of the input contains the number B ( id of the player possessing the ball in the very beginning).
+
+The third argument is an array C of size A having (ID/0).
+
+
+
+Output Format
+
+Return the "ID" of the player who possesses the ball after A passes.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 10
+ B = 23
+ C = [86, 63, 60, 0, 47, 0, 99, 9, 0, 0]
+Input 2:
+
+ A = 1
+ B = 1
+ C = [2]
+
+
+Example Output
+
+Output 1:
+
+ 63
+Output 2:
+
+ 2
+
+
+Example Explanation
+
+Explanation 1:
+
+ Initially, Player having  id = 23  posses ball. 
+ After pass  1,  Player having  id = 86  posses ball. 
+ After pass  2,  Player having  id = 63  posses ball. 
+ After pass  3,  Player having  id = 60  posses ball. 
+ After pass  4,  Player having  id = 63  posses ball. 
+ After pass  5,  Player having  id = 47  posses ball. 
+ After pass  6,  Player having  id = 63  posses ball. 
+ After pass  7,  Player having  id = 99  posses ball. 
+ After pass  8,  Player having  id = 9   posses ball. 
+ After pass  9,  Player having  id = 99  posses ball. 
+ After pass  10, Player having  id = 63   posses ball.
+Explanation 2:
+
+ Ball is passed to 2.
+
+ Appraoch - 
+
+ use stack to keep track of tha last player who has ball.
+
+ Code - 
+
+   public int solve(int A, int B, int[] C) {
+
+
+        Stack<Integer> st = new Stack<>();
+
+        int n=C.length;
+
+        for( int i=0; i < n; i++){
+            if( C[i] == 0){
+                st.pop();
+                continue;
+            }
+            st.push(C[i]);
+        }
+
+        if(st.isEmpty()){
+            return B;
+        }else{
+        return st.peek();
+        }
+    }
+
+
+    Q - Double Character Trouble
+
+    You have a string, denoted as A.
+
+To transform the string, you should perform the following operation repeatedly:
+Identify the first occurrence of consecutive identical pairs of characters within the string.
+Remove this pair of identical characters from the string.
+Repeat steps 1 and 2 until there are no more consecutive identical pairs of characters.
+The final result will be the transformed string.
+
+
+Problem Constraints
+
+1 <= |A| <= 100000
+
+
+
+Input Format
+
+First and only argument is string A.
+
+
+
+Output Format
+
+Return the final string.
+
+
+
+Example Input
+
+Input 1:
+
+
+ A = "abccbc"
+
+Input 2:
+
+
+ A = "ab"
+
+
+
+Example Output
+
+Output 1:
+
+ "ac"
+Output 2:
+
+ "ab"
+
+
+Example Explanation
+
+Explanation 1:
+
+The Given string is "abccbc".
+
+Remove the first occurrence of consecutive identical pairs of characters "cc".
+After removing the string will be "abbc".
+
+Again Removing the first occurrence of consecutive identical pairs of characters "bb".
+After remvoing, the string will be "ac".
+
+Now, there is no consecutive identical pairs of characters.
+Therefore the string after this operation will be "ac".
+Explanation 2:
+
+ No removals are to be done.
+
+ Appraoch - Use stack to keep track of immediate next characters and efficient 
+ removing operations.
+
+ Code - 
+
+    public String solve(String A) {
+
+        Stack<Character> st = new Stack<>();
+
+
+        for(int i=0; i<A.length(); i++){
+            char temp = A.charAt(i);
+
+            if( !st.isEmpty() && st.peek() == temp){
+                st.pop();
+                continue;
+            }
+
+            st.push(temp);
+        }
+
+        StringBuilder ansSB = new StringBuilder();
+
+        while(!st.isEmpty()){
+            ansSB.append(st.pop());
+        }
+        ansSB.reverse();
+        
+        return ansSB.toString();
+    }
+
+
+    Q - Balanced Paranthesis
+
+    Problem Description
+
+Given an expression string A, examine whether the pairs and the orders of “{“,”}”, ”(“,”)”, ”[“,”]” are correct in A.
+
+Refer to the examples for more clarity.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 100
+
+
+
+Input Format
+
+The first and the only argument of input contains the string A having the parenthesis sequence.
+
+
+
+Output Format
+
+Return 0 if the parenthesis sequence is not balanced.
+
+Return 1 if the parenthesis sequence is balanced.
+
+
+
+Example Input
+
+Input 1:
+
+ A = {([])}
+Input 2:
+
+ A = (){
+Input 3:
+
+ A = ()[] 
+
+
+Example Output
+
+Output 1:
+
+ 1 
+Output 2:
+
+ 0 
+Output 3:
+
+ 1 
+
+
+ Approach - use stack to keep track of last open and close bracket.
+
+ Code - 
+
+  public int solve(String A) {
+
+        int n = A.length();
+        
+        Stack<Character> st = new Stack<>();
+        HashMap<Character, Character> hm = new HashMap<>();
+        hm.put( '}', '{');
+        hm.put(']', '[');
+        hm.put(')', '(');
+
+        for(int i=0; i<n; i++){
+
+            char temp = A.charAt(i);
+
+            if( temp == '{' || temp == '[' || temp == '('){
+
+                st.push(temp);
+            }else{
+
+                if( st.isEmpty()){
+                    return 0;
+                }
+
+                if(!st.isEmpty() && hm.get(temp) == st.peek()){
+                    st.pop();
+               
+                }else{
+                    return 0;
+                }
+            }
+        }
+
+        if( st.isEmpty()){
+            return 1;
+        }else{
+            return 0;
+        }
+
+    }
+
+Q -  Evaluate Expression
+
+Problem Description
+
+An arithmetic expression is given by a string array A of size N. Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+
+
+Valid operators are +, -, *, /. Each string may be an integer or an operator.
+
+Note: Reverse Polish Notation is equivalent to Postfix Expression, where operators are written after their operands.
+
+
+
+Problem Constraints
+
+1 <= N <= 105
+
+
+
+Input Format
+
+The only argument given is string array A.
+
+
+
+Output Format
+
+Return the value of arithmetic expression formed using reverse Polish Notation.
+
+
+
+Example Input
+
+Input 1:
+A =   ["2", "1", "+", "3", "*"]
+Input 2:
+A = ["4", "13", "5", "/", "+"]
+
+
+Example Output
+
+Output 1:
+9
+Output 2:
+6
+
+Appraoch - use Stack to solve the the postfix expression.
+
+Code - 
+
+  public int evalRPN(String[] A) {
+
+        int n = A.length;
+
+        Stack<String> st = new Stack<>();
+
+        for(int i =0; i < n; i++){
+
+            String temp = A[i];
+            int op1=0, op2=0;
+            int result=0;
+
+            if( temp.equals("+") || temp.equals("-") || temp.equals("*") || temp.equals("/")){
+
+                if(!st.isEmpty())
+                op1 = Integer.parseInt(st.pop());
+
+                if(!st.isEmpty())
+                op2 = Integer.parseInt(st.pop());
+
+                result=0;
+
+                if( temp.equals("+")){
+                    result = op2 + op1;
+                }else if( temp.equals("-")){
+                    result = op2 - op1;
+                }else if( temp.equals("*")){
+                    result = op2 * op1;
+                }else {
+                    if(op1 != 0)
+                    result = op2 / op1;
+                }
+
+                st.push( result + "" );
+                
+                continue;
+            }
+
+            st.push(temp +"");
+        }
+
+        return Integer.parseInt( st.peek());
+    }
+
+    Q - Min Stack
+
+    Problem Description
+
+Design a stack that supports push, pop, top, and retrieve the minimum element in constant time.
+push(x) -- Push element x onto stack.
+pop() -- Removes the element on top of the stack.
+top() -- Get the top element.
+getMin() -- Retrieve the minimum element in the stack.
+NOTE:
+All the operations have to be constant time operations.
+getMin() should return -1 if the stack is empty.
+pop() should return nothing if the stack is empty.
+top() should return -1 if the stack is empty.
+
+
+Problem Constraints
+
+1 <= Number of Function calls <= 106
+It is guaranteed that, atleast one call is made to either getMin() or top().
+
+
+Input Format
+
+Functions will be called by the checker code automatically.
+
+
+Output Format
+
+Each function should return the values as defined by the problem statement.
+
+
+Example Input
+
+Input 1:
+push(1)
+push(2)
+push(-2)
+getMin()
+pop()
+getMin()
+top()
+Input 2:
+getMin()
+pop()
+top()
+
+Approach - implement stack using an array.
+
+Code - 
+
+class Solution {
+
+    Pair[] stack = new Pair[(int) Math.pow(10, 6)];
+
+    int top=-1;
+
+    public void push(int x) {
+        
+        Pair pair=new Pair();
+        pair.val = x;
+        
+        int minTill= (top == -1) ? x : Math.min(x, peek().minTill);
+
+        pair.minTill = minTill;
+        top++;
+
+        stack[top]=pair;
+        
+    }
+
+
+    public void pop() {
+
+        if( top != -1){
+            top--;
+        }
+        
+    }
+
+    public int top() {
+        
+    if( top != -1){
+    return stack[top].val;
+    }
+    return -1;  
+    }
+
+    public Pair peek(){
+        if( top == -1){
+            return null;
+        }
+        return stack[top];
+    }
+
+    public int getMin() {
+        
+        if(peek() == null){
+            return -1;
+        }
+        return peek().minTill;
+    }
+}
+
+class Pair{
+    public int val;
+    public int minTill = Integer.MAX_VALUE;
+}
+
+
+Q -  Redundant Braces
+
+
+Problem Description
+
+Given a string A denoting an expression. It contains the following operators '+', '-', '*', '/'.
+
+
+Check whether A has redundant braces or not.
+
+NOTE: A will be always a valid expression and will not contain any white spaces.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 105
+
+
+
+Input Format
+
+The only argument given is string A.
+
+
+
+Output Format
+
+Return 1 if A has redundant braces else, return 0.
+
+
+
+Example Input
+
+Input 1:
+
+
+ A = "((a+b))"
+Input 2:
+
+ A = "(a+(a+b))"
+
+
+
+
+
+
+Example Output
+
+Output 1:
+
+
+ 1
+Output 2:
+
+ 0
+
+
+
+Example Explanation
+
+Explanation 1:
+
+
+ ((a+b)) has redundant braces so answer will be 1.
+Explanation 2:
+
+ (a+(a+b)) doesn't have have any redundant braces so answer will be 0.
+
+ Approach - We can say that if there is no operator between any open and closing bracket then 
+ that pair of brackets is redundant and we can get rid of that.
+
+ so here using stack to keep track of these brackets and also checking if the operator is present between 
+ two parenthesis.
+
+ Code  - 
+
+  public int braces(String A) {
+
+        Stack<Character> st = new Stack<>();
+
+        int n =A.length();
+
+        for( int i=0; i <n; i++){
+
+            char temp = A.charAt(i);
+
+            if( temp == ')' ){
+                if(!st.isEmpty() && st.peek() == '(' ){
+                    return 1;
+                }
+
+                boolean isOperatorPresent=false;
+
+                while( !st.isEmpty() && st.peek() != '('){
+
+                    char temp2 = st.pop();
+                    
+                    if( temp2 == '+' || temp2 == '-' || temp2 == '/' || temp2 == '*'){
+                        isOperatorPresent = true;
+                    }
+                }
+
+                if(!st.isEmpty())
+                st.pop(); // removing open bracket
+
+                if(!isOperatorPresent){
+                    return 1;
+                }
+
+                continue;
+            }
+
+            st.push(temp);
+        }
+
+        return 0;
+    }
+
+
+    

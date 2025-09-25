@@ -1,0 +1,308 @@
+Q - Check two bracket expressions
+
+
+Problem Description
+
+Given two strings A and B. Each string represents an expression consisting of lowercase English alphabets, '+', '-', '(' and ')'.
+
+
+The task is to compare them and check if they are similar. If they are identical, return 1 else, return 0.
+
+NOTE: It may be assumed that there are at most 26 operands from ‘a’ to ‘z’, and every operand appears only once.
+
+
+
+
+Problem Constraints
+
+1 <= length of the each String <= 100
+
+
+
+Input Format
+
+The given arguments are string A and string B.
+
+
+
+Output Format
+
+Return 1 if they represent the same expression else return 0.
+
+
+
+Example Input
+
+Input 1:
+
+ A = "-(a+b+c)"
+ B = "-a-b-c"
+Input 2:
+
+ A = "a-b-(c-d)"
+ B = "a-b-c-d"
+
+
+Example Output
+
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+
+Explanation 1:
+
+ The expression "-(a+b+c)" can be written as "-a-b-c" which is equal as B. 
+Explanation 2:
+
+ Both the expression are different.
+
+
+ Approach - 
+
+ 
+The trick here is to simplify both expression by removing brackets and properly adjusting signs. Only then can we compare them letter by letter.
+
+We will traverse the string from left to right and use stack to remember if we are under + or -.
+
+we will keep a sign stack to track current (+ or -), every tiem we hit (, we combine current sign with the top of stack and push it. when we hit ')', we pop the sign.
+
+The stack help us remember the sign context. When - comes before a bracket, it flips the sign of everything inside. We simulate this by pushing flip sign onto the stack and popping it out when bracket ends.
+
+
+
+Code - 
+
+public class Solution {
+    public int solve(String A, String B) {
+
+        String flattenedA = flatten(A);
+        String flattenedB = flatten(B);
+
+        return flattenedA.equals(flattenedB) ? 1:0;
+    }
+
+    private String flatten(String A){
+        Stack<Character> signStack = new Stack<>();
+
+        signStack.push('+');
+        char currentSign = '+';
+
+        Map<Character, Integer> variableMap = new HashMap<>();
+
+        int i=0;
+
+        while( i < A.length()){
+
+            char ch = A.charAt(i);
+
+            if( ch == '+' || ch == '-'){
+                currentSign = ch;
+                i++;
+            }else if( ch == '('){
+
+                // combine sign with top stack
+                char top = signStack.peek();
+                char effectiveSign = combineSign(top, currentSign);
+
+                signStack.push(effectiveSign);
+
+                currentSign = '+'; // reset for next inner expression
+                i++;
+            }else if( ch ==')'){
+                signStack.pop();
+                i++;
+            }else if( Character.isLetter(ch)){
+                char top = signStack.peek();
+                char effectiveSign = combineSign(top, currentSign);
+
+                // update variable map with net sign 
+                // +1 for positive and -1 for negative
+
+                variableMap.put( ch, effectiveSign == '+' ? 1: -1);
+                i++;
+            }else {
+                i++;
+            }
+        }
+
+            StringBuilder sb = new StringBuilder();
+
+            for( char ch ='a'; ch <= 'z'; ch++){
+                if(variableMap.containsKey(ch)){
+
+                    sb.append(ch).append(":").append(variableMap.get(ch)).append(",");
+                }
+            }
+
+            return sb.toString();
+        
+    }
+
+    private static char combineSign(char a, char b){
+        if( a==b) return '+';
+        return '-';
+    }
+}
+
+
+Q - Infix to Postfix
+
+Problem Description
+
+Given string A denoting an infix expression. Convert the infix expression into a postfix expression.
+
+
+String A consists of ^, /, *, +, -, (, ) and lowercase English alphabets where lowercase English alphabets are operands and ^, /, *, +, - are operators.
+
+Find and return the postfix expression of A.
+
+NOTE:
+
+^ has the highest precedence.
+/ and * have equal precedence but greater than + and -.
++ and - have equal precedence and lowest precedence among given operators.
+
+
+
+Problem Constraints
+
+1 <= length of the string <= 500000
+
+
+
+Input Format
+
+The only argument given is string A.
+
+
+
+Output Format
+
+Return a string denoting the postfix conversion of A.
+
+
+
+Example Input
+
+Input 1:
+
+ A = "x^y/(a*z)+b"
+Input 2:
+
+ A = "a+b*(c^d-e)^(f+g*h)-i"
+
+
+Example Output
+
+Output 1:
+
+ "xy^az*/b+"
+Output 2:
+
+ "abcd^e-fgh*+^*+i-"
+
+
+Example Explanation
+
+Explanation 1:
+
+ Ouput dentotes the postfix expression of the given input.
+
+
+ Approach - 
+
+ 
+In postfix the operators with higher precedence comes first than the operators with lower precedence.
+
+Rules to convert an expression from infix to postfix - 
+
+a to z characters - add it to the output.
+
+( bracket - push parenthesis onto the stack.
+
+^, /, *, +, - - if bracket is present or stack is empty push the operator onto stack else keep popping if the operator on top of the stack has higher or equal precedence than current operator and then push the operator on stack.
+
+) bracket - pop till we get an open bracket.
+
+
+repeat above expressions untill entire expression is scanned.
+
+at the end pop all remaining operators from stack.
+
+
+
+Code - 
+
+public class Solution {
+   
+    public String solve(String A) {
+        return infixToPostfix(A);
+    }
+    public int prec(char c) {
+        if (c == '^')
+            return 3;
+        else if (c == '*' || c == '/')
+            return 2;
+        else if (c == '+' || c == '-')
+            return 1;
+        else
+            return -1;
+    }
+    // Function to convert infix expression
+    //to postfix expression
+    public String infixToPostfix(String s) {
+        Stack < Character > st = new Stack < Character > ();
+        st.push('N');
+        ArrayList < Character > ns = new ArrayList < Character > ();
+        for (int i = 0; i < s.length(); i++) {
+            char C = s.charAt(i);
+            // If the scanned character is an operand, add it to output string.
+            if ((C >= 'a' && C <= 'z') || (C >= 'A' && C <= 'Z'))
+                ns.add(C);
+            // If the scanned character is an '(', push it to the stack.
+            else if (C == '(')
+                st.push('(');
+            // If the scanned character is an ')', pop and to output string from the stack
+            // until an '(' is encountered.
+            else if (C == ')') {
+                while (st.peek() != 'N' && st.peek() != '(') {
+                    char c = st.peek();
+                    st.pop();
+                    ns.add(c);
+                }
+                if (st.peek() == '(') {
+                    char c = st.peek();
+                    st.pop();
+                }
+            }
+            //If an operator is scanned
+            else {
+                while (st.peek() != 'N' && prec(C) <= prec(st.peek())) {
+                    char c = st.peek();
+                    st.pop();
+                    ns.add(c);
+                }
+                st.push(C);
+            }
+        }
+        //Pop all the remaining elements from the stack
+        while (st.peek() != 'N') {
+            char c = st.peek();
+            st.pop();
+            ns.add(c);
+        }
+        StringBuilder result = new StringBuilder(ns.size());
+        for (Character c: ns) {
+            result.append(c);
+        }
+        return result.toString();
+    }
+   
+}
+
