@@ -306,3 +306,297 @@ public class Solution {
    
 }
 
+Q - Largest Rectangle in Histogram
+
+Problem Description
+
+Given an array of integers A.
+
+
+A represents a histogram i.e A[i] denotes the height of the ith histogram's bar. Width of each bar is 1.
+
+Find the area of the largest rectangle formed by the histogram.
+
+
+
+
+Problem Constraints
+
+1 <= |A| <= 100000
+
+
+1 <= A[i] <= 10000
+
+
+
+
+Input Format
+
+The only argument given is the integer array A.
+
+
+
+Output Format
+
+Return the area of the largest rectangle in the histogram.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [2, 1, 5, 6, 2, 3]
+Input 2:
+
+ A = [2]
+
+
+Example Output
+
+Output 1:
+
+ 10
+Output 2:
+
+ 2
+
+
+Example Explanation
+
+Explanation 1:
+
+
+The largest rectangle has area = 10 unit. Formed by A[3] to A[4].
+
+Explanation 2:
+
+
+Largest rectangle has area 2.
+
+Approach - 
+
+find out the Nearest smaller on left and nearest smaller on right of the given array.
+
+The nearest smaller on left and right will give the index of nearest smaller in the
+array at that index and next to that nearest smaller index we will get the index
+of element which is greater than nearest smaller and that will result in 
+forming a rectangle with maximum possible area.
+
+Code - 
+
+public class Solution {
+    public int largestRectangleArea(int[] A) {
+
+        int[] NSR = NearestSmallerOnRight(A);
+        int[] NSL = NearestSmallerOnLeft(A);
+
+        int maxArea=0;
+
+        int n= A.length;
+
+        for( int i=0; i<n; i++){
+
+            int height=A[i];
+            int l=NSL[i];
+            int r = NSR[i];
+
+            int width = r-l-1;
+
+            maxArea = Math.max(width * height, maxArea);
+        }
+
+        return maxArea;
+    }
+
+    public static int[] NearestSmallerOnRight(int[] A){
+
+        int n = A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for( int i =n-1; i >= 0; i--){
+
+            while( !st.isEmpty() && A[st.peek()] >= A[i]){
+                st.pop();
+            }
+
+            if( st.isEmpty()){
+                ans[i] = n;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(i);
+        }
+
+        return ans;
+    }
+
+     public static int[] NearestSmallerOnLeft(int[] A){
+
+        int n = A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for( int i =0; i<n; i++){   
+
+            while( !st.isEmpty() && A[st.peek()] >= A[i]){
+                st.pop();
+            }
+
+            if( st.isEmpty()){
+                ans[i] = -1;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(i);
+        }
+
+        return ans;
+    }
+}
+
+Q - Nearest Smaller Element
+
+Problem Description
+
+Given an array A, find the nearest smaller element G[i] for every element A[i] in the array such that the element has an index smaller than i.
+
+
+More formally,
+
+G[i] for an element A[i] = an element A[j] such that
+
+j is maximum possible AND
+
+j < i AND
+
+A[j] < A[i]
+
+Elements for which no smaller element exist, consider the next smaller element as -1.
+
+
+
+
+Problem Constraints
+
+1 <= |A| <= 100000
+
+
+-109 <= A[i] <= 109
+
+
+
+
+
+Input Format
+
+The only argument given is integer array A.
+
+
+
+Output Format
+
+Return the integar array G such that G[i] contains the nearest smaller number than A[i]. If no such element occurs G[i] should be -1.
+
+
+
+Example Input
+
+Input 1:
+
+
+ A = [4, 5, 2, 10, 8]
+
+Input 2:
+
+
+ A = [3, 2, 1]
+
+
+
+Example Output
+
+Output 1:
+
+
+ [-1, 4, -1, 2, 2]
+
+Output 2:
+
+
+ [-1, -1, -1]
+
+
+
+Example Explanation
+
+Explanation 1:
+
+
+index 1: No element less than 4 in left of 4, G[1] = -1
+index 2: A[1] is only element less than A[2], G[2] = A[1]
+index 3: No element less than 2 in left of 2, G[3] = -1
+index 4: A[3] is nearest element which is less than A[4], G[4] = A[3]
+index 4: A[3] is nearest element which is less than A[5], G[5] = A[3]
+
+Explanation 2:
+
+
+index 1: No element less than 3 in left of 3, G[1] = -1
+index 2: No element less than 2 in left of 2, G[2] = -1
+index 3: No element less than 1 in left of 1, G[3] = -1
+
+
+Approach - 
+
+use stack to find the nearest smaller element on the left of the current index.
+
+Code - 
+
+public class Solution {
+    public int[] prevSmaller(int[] A) {
+
+        // nearest smaller on the left
+
+        int n = A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for( int i=0; i<n; i++){
+
+            int ele = A[i];
+
+            while( !st.isEmpty() && A[st.peek()] >= ele ){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                ans[i] = -1;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(i);            
+        }
+
+        for(int i=0; i<n; i++){
+            
+            if(ans[i] != -1){
+            ans[i] = A[ans[i]];
+            }
+
+        }
+        return ans;
+    }
+}
+
+
