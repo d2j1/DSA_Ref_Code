@@ -600,3 +600,838 @@ public class Solution {
 }
 
 
+Q - MAX and MIN
+
+Problem Description
+
+Given an array of integers A.
+
+
+The value of an array is computed as the difference between the maximum element in the array and the minimum element in the array A.
+
+Calculate and return the sum of values of all possible subarrays of A modulo 109+7.
+
+
+
+
+
+Problem Constraints
+
+1 <= |A| <= 100000
+
+
+1 <= A[i] <= 1000000
+
+
+
+
+Input Format
+
+The first and only argument given is the integer array A.
+
+
+
+Output Format
+
+Return the sum of values of all possible subarrays of A modulo 109+7.
+
+
+
+Example Input
+
+Input 1:
+
+
+ A = [1]
+
+Input 2:
+
+
+ A = [4, 7, 3, 8]
+
+
+
+Example Output
+
+Output 1:
+
+ 0
+Output 2:
+
+ 26
+
+
+Example Explanation
+
+Explanation 1:
+
+Only 1 subarray exists. Its value is 0.
+Explanation 2:
+
+value ( [4] ) = 4 - 4 = 0
+value ( [7] ) = 7 - 7 = 0
+value ( [3] ) = 3 - 3 = 0
+value ( [8] ) = 8 - 8 = 0
+value ( [4, 7] ) = 7 - 4 = 3
+value ( [7, 3] ) = 7 - 3 = 4
+value ( [3, 8] ) = 8 - 3 = 5
+value ( [4, 7, 3] ) = 7 - 3 = 4
+value ( [7, 3, 8] ) = 8 - 3 = 5
+value ( [4, 7, 3, 8] ) = 8 - 3 = 5
+sum of values % 10^9+7 = 26
+
+
+Approach - 
+
+
+BF - 
+
+Try out all the subarrays.
+MAintain two variables to track min and max of any subarray.
+
+TC - O(n^2)
+SC - O(1)
+
+
+Optimization 1 - 
+
+Instead of calculating value of each sub array we should - for each element of the array find its contribution to the total answer. 
+
+value = max(array) - min( array)
+
+
+ans = A[i] * ( count of subarrays it is max - count of subarrays where it is min)
+
+
+Approach - 
+
+Calculate the next greater element and previous greater element for each element in the array. Each element Ai is the maximum of all subarrays starting at (previous greater element)i + 1 to (next greater element)i - 1.
+
+Similarly, the next smaller element and previous smaller element can be used for minimum values of subarrays
+
+Time Complexity:- O(N)
+
+
+
+Code - 
+
+public class Solution {
+    public int solve(int[] A) {
+
+        int n = A.length;
+
+            int[] nxtGrtOnLeft = nextGreaterElementOnLeft(A);
+            int[] nxtSmlOnLeft = nextSmallerElementOnLeft(A);
+            int[] nxtGrtOnRight = nextGreaterElementOnRight(A);
+            int[] nxtSmlOnRight = nextSmallerElementOnRight(A);
+
+        long grtTotal=0;
+
+        int mod = 1000000007;
+
+        for(int i =0; i < n; i++){
+
+            int leftGrt = i - nxtGrtOnLeft[i];
+            int rightGrt = nxtGrtOnRight[i] - i;
+
+long count = (long) leftGrt * rightGrt;
+grtTotal = (grtTotal + ((A[i] ) * 1L * count) % mod) % mod;
+        }
+
+        long smlTotal = 0;
+        
+
+        for(int i =0; i < n; i++){
+            int leftSml = i - nxtSmlOnLeft[i];
+            int rightSml = nxtSmlOnRight[i] - i;
+
+long cnt = (long) leftSml * rightSml;
+smlTotal = (smlTotal + ((A[i] ) * 1L * cnt) % mod) % mod;
+        }
+
+        return (int) (grtTotal - smlTotal + mod) %mod;
+
+    }
+
+    public static int[] nextGreaterElementOnLeft(int[] A){
+
+        int n= A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<Integer>();
+
+        for( int i=0; i<n; i++){
+
+            int temp = A[i];
+
+            while(!st.isEmpty() && A[st.peek()] <= temp){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+            ans[i] = -1;
+            }else{
+            ans[i] = st.peek();
+            }
+
+            st.push(i);
+        }
+
+        return ans;
+    }
+
+    public static int[] nextSmallerElementOnLeft(int[] A){
+
+        int n = A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for(int i=0; i<n; i++){
+
+            int temp = A[i];
+
+            while( !st.isEmpty() && A[st.peek()] >= temp){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                ans[i] = -1;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(i);
+        }
+        return ans;
+    }
+
+
+    public static int[] nextGreaterElementOnRight(int[] A){
+
+        int n= A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for(int i =n-1; i>=0; i--){
+
+            int temp = A[i];
+
+            while( !st.isEmpty() && A[st.peek()] < temp){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                ans[i] = n;
+            }else{
+                ans[i] = st.peek();
+            }
+            st.push(i);
+        }
+
+        return ans;
+    }
+
+    public static int[] nextSmallerElementOnRight(int[] A){
+
+        int n=A.length;
+
+        int[] ans = new int[n];
+
+        Stack<Integer> st = new Stack<>();
+
+        for( int i = n-1; i>= 0; i--){
+            int temp = A[i];
+
+            while( !st.isEmpty() && A[st.peek()] > temp){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                ans[i] = n;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(i);
+        }
+
+        return ans;
+    }
+}
+
+
+Q -  Next Greater
+
+
+Problem Description
+
+Given an array A, find the next greater element G[i] for every element A[i] in the array.
+The next greater element for an element A[i] is the first greater element on the right side of A[i] in the array, A.
+
+
+More formally:
+
+G[i] for an element A[i] = an element A[j] such that 
+    j is minimum possible AND 
+    j > i AND
+    A[j] > A[i]
+Elements for which no greater element exists, consider the next greater element as -1.
+
+
+
+
+
+
+
+
+
+Problem Constraints
+
+1 <= |A| <= 105
+
+
+1 <= A[i] <= 107
+
+
+
+
+Input Format
+
+The first and the only argument of input contains the integer array, A.
+
+
+
+Output Format
+
+Return an integer array representing the next greater element for each index in A.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [4, 5, 2, 10] 
+Input 2:
+
+ A = [3, 2, 1] 
+
+
+
+Example Output
+
+Output 1:
+
+ [5, 10, 10, -1] 
+Output 2:
+
+ [-1, -1, -1] 
+
+
+Example Explanation
+
+Explanation 1:
+
+For 4, the next greater element towards its right is 5.
+For 5 and 2, the next greater element towards their right is 10.
+For 10, there is no next greater element towards its right.
+Explanation 2:
+
+As the array is in descending order, there is no next greater element for all the elements. 
+
+Approach - Here we need to find the next greater element on right.
+
+Code - 
+
+public class Solution {
+    public int[] nextGreater(int[] A) {
+
+        int n= A.length;
+
+        Stack<Integer> st = new Stack<>();
+        int ans[] = new int[n];
+
+        for( int i = n-1; i>= 0; i--){
+
+            int temp = A[i];
+
+            while( !st.isEmpty() && st.peek() <= temp){
+                st.pop();
+            }
+
+            if( st.isEmpty()){
+                ans[i] = -1;
+            }else{
+                ans[i] = st.peek();
+            }
+
+            st.push(temp);
+        }
+
+        return ans;
+    }
+}
+
+
+Q - Sort stack using another stack
+
+
+Problem Description
+
+Given a stack of integers A, sort it using another stack.
+
+Return the array of integers after sorting the stack using another stack.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 5000
+
+
+0 <= A[i] <= 109
+
+
+
+
+Input Format
+
+The only argument is a stack given as an integer array A.
+
+
+
+Output Format
+
+Return the array of integers after sorting the stack using another stack.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [5, 4, 3, 2, 1]
+Input 2:
+
+ A = [5, 17, 100, 11]
+
+
+Example Output
+
+Output 1:
+
+ [1, 2, 3, 4, 5]
+Output 2:
+
+ [5, 11, 17, 100]
+
+
+Example Explanation
+
+Explanation 1:
+
+ Just sort the given numbers.
+Explanation 2:
+
+ Just sort the given numbers.
+
+
+ Approach - 
+
+ Create a temporary stack say B.
+
+While input stack is not empty:
+1. pop an element from input stack calls it x.
+2. while the temporary stack is not empty and top of the temporary stack is greater than x pop from the temporary stack and push it into input stack.
+3. push x in the temporary stack.
+
+The sorted numbers are in the temporary stack.
+
+Worst case time complexity O(n^2).
+
+Code - 
+
+public class Solution {
+    public int[] solve(int[] A) {
+
+        int n=A.length;
+        Stack<Integer> st = new Stack<>();
+        Stack<Integer> st2 = new Stack<>();
+
+        int[] ans = new int[n];
+
+        for( int i=0; i<n; i++){
+
+            int temp = A[i];
+            
+            while( !st.isEmpty() && st.peek() <= temp){
+                st2.push(st.pop());
+            }
+
+            st.push(temp);
+
+        while(!st2.isEmpty()){
+            st.push(st2.pop());
+        }
+
+
+        }
+
+
+
+        for( int i=0; i < n; i++){
+            if(!st.isEmpty())
+            ans[i] = st.pop();
+        }
+
+        return ans;
+
+    }
+}
+
+
+Q - Max Rectangle in Binary Matrix
+
+Problem Description
+
+Given a 2-D binary matrix A of size N x M filled with 0's and 1's, find the largest rectangle containing only ones and return its area.
+
+
+
+
+Problem Constraints
+
+1 <= N, M <= 100
+
+
+
+Input Format
+
+The first argument is a 2-D binary array A.
+
+
+
+Output Format
+
+Return an integer denoting the area of the largest rectangle containing only ones.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [
+       [1, 1, 1]
+       [0, 1, 1]
+       [1, 0, 0] 
+     ]
+Input 2:
+
+ A = [
+       [0, 1, 0]
+       [1, 1, 1]
+     ] 
+
+
+Example Output
+
+Output 1:
+
+ 4
+Output 2:
+
+ 3
+
+
+Example Explanation
+
+Explanation 1:
+
+
+ As the max area rectangle is created by the 2x2 rectangle created by (0, 1), (0, 2), (1, 1) and (1, 2).
+Explanation 2:
+
+ As the max area rectangle is created by the 1x3 rectangle created by (1, 0), (1, 1) and (1, 2).
+
+
+ Approach - 
+
+ Brute Force - 
+
+The rectangle is defined by two rows and two columns:
+
+Top-left corner → (r1, c1)
+
+Bottom-right corner → (r2, c2)
+
+So, in brute force, we can try all possible rectangles and check if they are filled entirely with 1s.
+
+Steps
+
+Enumerate all possible pairs of rows and columns:
+
+Choose r1 (top row) → from 0 to N-1
+
+Choose c1 (left column) → from 0 to M-1
+
+Choose r2 (bottom row) → from r1 to N-1
+
+Choose c2 (right column) → from c1 to M-1
+
+That defines one rectangle.
+
+Check if this rectangle is valid:
+
+Iterate over all cells inside (r1, c1) to (r2, c2).
+
+If all are 1s → rectangle is valid.
+
+Calculate area:
+
+area=(r2−r1+1)×(c2−c1+1)
+
+Keep track of maximum area found.
+
+Time Complexity
+
+Number of ways to choose rectangles:
+
+𝑂(𝑁^2 × 𝑀^2)
+
+For each rectangle, checking all cells:
+
+O(N×M)
+
+Total complexity:
+
+𝑂(𝑁^3 × 𝑀^3)
+
+
+Optimization - 
+
+Key Idea
+
+If you think about it:
+
+Each row of the matrix can be treated as the base of a histogram.
+
+The histogram height at each column represents the number of consecutive 1’s up to that row.
+
+Then, for each row, the problem reduces to finding the largest rectangle area in a histogram (which we already know how to do in O(M) using stacks).
+
+Step-by-Step
+Step 1: Build histogram heights
+
+Create an array heights[M] (same width as the matrix).
+
+Start from row 0, fill heights with 1 where matrix cell is 1.
+
+For every next row:
+
+If A[r][c] == 1 → heights[c] += 1
+
+Else → heights[c] = 0
+
+So, heights[c] always represents the **continuous streak of 1’s in column c up to row r.
+
+Step 2: Largest Rectangle in Histogram (LRH)
+
+For each row’s heights, compute the maximum rectangle area in that histogram.
+
+This is done using the Next Smaller Element (NSE) left & right approach with stacks in O(M).
+
+Formula for area:
+
+area
+=
+height[i]
+×
+(
+right[i]
+−
+left[i]
+−
+1
+)
+area=height[i]×(right[i]−left[i]−1)
+Step 3: Track global maximum
+
+Process all rows one by one, compute histogram max area for each row, update the answer.
+
+Example
+
+Matrix:
+
+[
+  [0, 1, 0],
+  [1, 1, 1]
+]
+
+
+Row 0 → heights = [0, 1, 0] → max area = 1
+
+Row 1 → update heights:
+
+If cell=1 → add 1
+
+If cell=0 → reset to 0
+So, heights = [1, 2, 1]
+Largest Rectangle in Histogram = 3
+
+Answer = 3 ✅
+
+Time Complexity
+
+For each of N rows → build/update histogram in O(M)
+
+For each histogram → LRH in O(M)
+
+Total = O(N * M) (much faster than brute force O(N^3 * M^3))
+
+Dry run with an example - 
+
+Matrix:
+
+[
+  [1, 1, 1],
+  [0, 1, 1],
+  [1, 0, 0]
+]
+
+
+We’ll build heights[] row by row and compute the largest rectangle in histogram at each step.
+
+Row 0 → [1, 1, 1]
+
+Build histogram:
+
+heights = [1, 1, 1]
+
+
+Largest Rectangle in Histogram (LRH):
+
+Rectangles possible: 1x3, 1x2, 1x1.
+
+Max area = 3.
+
+So far → maxArea = 3
+
+Row 1 → [0, 1, 1]
+
+Update histogram:
+
+Column 0: 0 → reset → 0
+
+Column 1: 1 → add 1 → 2
+
+Column 2: 1 → add 1 → 2
+
+heights = [0, 2, 2]
+
+
+LRH:
+
+At col1 → height=2, width=2 → area=4 ✅
+
+At col2 → height=2, width=1 → area=2
+
+At col0 → height=0, area=0
+
+Max area = 4
+
+So far → maxArea = 4
+
+Row 2 → [1, 0, 0]
+
+Update histogram:
+
+Column 0: 1 → add 1 → 1
+
+Column 1: 0 → reset → 0
+
+Column 2: 0 → reset → 0
+
+heights = [1, 0, 0]
+
+
+LRH:
+
+At col0 → height=1, width=1 → area=1
+
+Others = 0
+
+Max area = 1
+
+So far → maxArea = max(4,1) = 4
+
+Final Answer = 4 ✅
+
+This matches the expected output from your example:
+
+[
+  [1, 1, 1]
+  [0, 1, 1]
+  [1, 0, 0]
+]
+→ Max rectangle area = 4
+
+
+✨ So the histogram evolves like this:
+
+Row 0: [1, 1, 1] → area = 3  
+Row 1: [0, 2, 2] → area = 4  
+Row 2: [1, 0, 0] → area = 1  
+
+
+👉 Global maximum = 4
+
+Code  - 
+
+public class Solution {
+    public int maximalRectangle(int[][] A) {
+
+ if (A.length == 0) return 0;
+
+        int n = A.length, m = A[0].length;
+        int[] heights = new int[m];
+        int maxArea = 0;
+
+        for (int i = 0; i < n; i++) {
+            // Build histogram
+            for (int j = 0; j < m; j++) {
+                if (A[i][j] == 1) heights[j] += 1;
+                else heights[j] = 0;
+            }
+            // Find max rectangle in histogram
+            maxArea = Math.max(maxArea, largestRectangleInHistogram(heights));
+        }
+        return maxArea;
+
+    }
+
+    private int largestRectangleInHistogram(int[] heights) {
+        int n = heights.length;
+        Stack<Integer> st = new Stack<>();
+        int maxArea = 0;
+
+        for (int i = 0; i <= n; i++) {
+            int h = (i == n ? 0 : heights[i]);
+            while (!st.isEmpty() && h < heights[st.peek()]) {
+                int height = heights[st.pop()];
+                int width = st.isEmpty() ? i : i - st.peek() - 1;
+                maxArea = Math.max(maxArea, height * width);
+            }
+            st.push(i);
+        }
+        return maxArea;
+    }
+}
+
+
+
