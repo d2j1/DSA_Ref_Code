@@ -1,0 +1,85 @@
+Q - Equal Tree Partition
+
+Given a binary tree A. Check whether it is possible to partition the tree to two trees which have equal sum of values after removing exactly one edge on the original tree.
+
+Problem Constraints
+
+1 <= size of tree <= 100000
+
+0 <= value of node <= 109
+
+Input Format
+
+First and only argument is head of tree A.
+
+Output Format
+
+Return 1 if the tree can be partitioned into two trees of equal sum else return 0.
+
+
+Approach - 
+
+
+Compute the sum of every subtree.
+
+Store each subtree sum in a Map<Long, Integer> (frequency count).
+
+After computing:
+
+Let tot = total sum of tree.
+
+If tot is even → check if there exists a subtree whose sum is exactly tot/2.
+
+Because removing the edge above that subtree divides the tree into two parts:
+
+Subtree sum = tot/2
+
+Remaining tree sum = tot - tot/2 = tot/2
+
+✅ Equal partition possible.
+
+If tot == 0, then at least two different subtrees must have sum 0,
+ so that cutting one edge still leaves another part with sum 0.
+
+
+
+Time Complexity: O(N) → visits each node once.
+
+Space Complexity: O(N) → hashmap storing all subtree sums.
+
+
+Code - 
+
+/**
+ * Definition for binary tree
+ * class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) {
+ *      val = x;
+ *      left=null;
+ *      right=null;
+ *     }
+ * }
+ */
+public class Solution {
+
+public int solve(TreeNode a) {
+        Map < Long, Integer > map = new HashMap < > ();
+        long tot = populate(a, map);
+        // since total sum can also be zero
+        if (tot == 0) 
+            return map.getOrDefault(tot, 0) > 1 ? 1 : 0;
+        return tot % 2 == 0 && map.containsKey(tot / 2) ? 1 : 0;
+    }
+    public long populate(TreeNode a, Map < Long, Integer > map) {
+        if (a == null) 
+            return 0;
+        long sum = a.val + populate(a.left, map) + populate(a.right, map);
+        map.put(sum, map.getOrDefault(sum, 0) + 1);
+        return sum;
+    }
+}
+
+
