@@ -198,3 +198,115 @@ public static class UserQueue {
  * boolean param4 = obj.empty();
  */
 
+
+
+
+Q - N integers containing only 1, 2 & 3
+
+Problem Description
+
+Given an integer, A. Find and Return first positive A integers in ascending order containing only digits 1, 2, and 3.
+
+
+NOTE: All the A integers will fit in 32-bit integers.
+
+
+
+
+Problem Constraints
+
+1 <= A <= 29500
+
+
+
+Input Format
+
+The only argument given is integer A.
+
+
+
+Output Format
+
+Return an integer array denoting the first positive A integers in ascending order containing only digits 1, 2 and 3.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 3
+Input 2:
+
+ A = 7
+
+
+Example Output
+
+Output 1:
+
+ [1, 2, 3]
+Output 2:
+
+ [1, 2, 3, 11, 12, 13, 21]
+
+
+Example Explanation
+
+Explanation 1:
+
+ Output denotes the first 3 integers that contains only digits 1, 2 and 3.
+Explanation 2:
+
+ Output denotes the first 7 integers that contains only digits 1, 2 and 3.
+
+
+Approach - 
+
+Steps
+
+Initialize a queue with "1", "2", "3".
+
+Repeatedly pop from the queue, add to the answer list.
+
+For each popped number, generate new numbers by appending "1", "2", "3" and push back to the queue.
+
+Stop when we have A numbers.
+
+Code - 
+
+public class Solution {
+    public int[] solve(int A) {
+
+
+        List<Integer> result = new ArrayList<>();
+        Queue<StringBuilder> queue = new LinkedList<>();
+
+        queue.add(new StringBuilder("1"));
+        queue.add(new StringBuilder("2"));
+        queue.add(new StringBuilder("3"));
+
+        while( result.size() < A){
+
+            StringBuilder curr = queue.poll();
+
+            result.add(Integer.parseInt(curr.toString()));
+
+queue.add(new StringBuilder(curr).append("1"));
+queue.add(new StringBuilder(curr).append("2"));
+queue.add(new StringBuilder(curr).append("3"));
+
+
+        }
+
+        int[] ans = new int[A];
+
+        for( int i =0; i<A; i++){
+            ans[i] = result.get(i);
+        }
+
+        return ans;
+    }
+}
+
+
