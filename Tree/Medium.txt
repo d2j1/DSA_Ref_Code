@@ -83,3 +83,111 @@ public int solve(TreeNode a) {
 }
 
 
+Q - Sum binary tree or not
+
+
+Problem Description
+
+Given a binary tree. Check whether the given tree is a Sum-binary Tree or not.
+
+Sum-binary Tree is a Binary Tree where the value of a every node is equal to sum of the nodes present in its left subtree and right subtree.
+
+An empty tree is Sum-binary Tree and sum of an empty tree can be considered as 0. A leaf node is also considered as SumTree.
+
+Return 1 if it sum-binary tree else return 0.
+
+
+
+Problem Constraints
+
+1 <= length of the array <= 100000
+
+0 <= node values <= 50
+
+
+
+Input Format
+
+The only argument given is the root node of tree A.
+
+
+
+Output Format
+
+Return 1 if it is sum-binary tree else return 0.
+
+
+Appraoch - 
+
+To verify this, we need postorder traversal (left → right → root).
+
+At each node, we must calculate:
+
+The sum of its left subtree.
+
+The sum of its right subtree.
+
+Check if node.val == leftSum + rightSum.
+
+If this condition fails anywhere, the whole tree is not a Sum Tree.
+
+Efficient Approach
+
+Instead of separately computing subtree sums multiple times (which could lead to O(n^2)), we should do it in one traversal:
+
+Define a recursive function that:
+
+Returns the sum of the subtree rooted at the current node if it is a Sum Tree.
+
+Returns -1 if the subtree is not a Sum Tree.
+
+While traversing:
+
+If node is null → return 0.
+
+If node is a leaf → return node.val.
+
+Recursively get left and right subtree sums.
+
+If either is -1 → bubble up -1.
+
+Check: node.val == leftSum + rightSum.
+
+If true → return node.val + leftSum + rightSum (total sum).
+
+Else → return -1.
+
+At the end, if the result is -1, return 0, else 1.
+
+
+Code - 
+
+
+ public int solve(TreeNode A) {
+
+        return isSumTree(A) != -1 ? 1:0;
+    }
+
+    public int isSumTree(TreeNode A){
+
+        if( A == null) return 0;
+
+        if(A.left == null && A.right == null){
+            return A.val;
+        }
+
+        int leftSum = isSumTree(A.left);
+        int rightSum = isSumTree(A.right);
+
+        // propogate the failure 
+        if( leftSum == -1 || rightSum == -1) return -1;
+
+        if( A.val == leftSum+rightSum){
+            return A.val + leftSum +rightSum;
+        }else{
+            return -1;
+        }
+    }
+
+
+    
