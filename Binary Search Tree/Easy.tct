@@ -1,0 +1,112 @@
+
+
+Q - Valid Binary Search Tree
+
+Problem Description
+
+You are given a binary tree represented by root A. You need to check if it is a Binary Search Tree or not.
+
+
+Assume a BST is defined as follows:
+
+1) The left subtree of a node contains only nodes with keys less than the node's key.
+
+2) The right subtree of a node contains only nodes with keys greater than the node's key.
+
+3) Both the left and right subtrees must also be binary search trees.
+
+
+
+
+
+Problem Constraints
+
+1 <= Number of nodes in binary tree <= 105
+
+
+
+
+
+0 <= node values <= 232-1
+
+
+
+
+
+Input Format
+
+First and only argument is head of the binary tree A.
+
+
+
+Output Format
+
+Return 0 if false and 1 if true.
+
+
+Appraoch - 
+
+
+BF - 
+
+for every node, 
+
+find max in left subtree and find min in right subtree. 
+
+if( value of node > max in left subtree and value of node < min in right subtree ) then that node is valid subtree.
+
+
+TC - O(n^2)
+SC - O(1)
+
+optimization idea - 
+
+We pass down the valid range (min, max) for every node.
+
+
+Start from root with min = -∞, max = +∞.
+
+At each node:
+
+If node is null, return true (base case).
+
+If node.val <= min or node.val >= max, return false.
+
+Recurse for:
+
+Left child → (min, node.val)
+
+Right child → (node.val, max)
+
+If both subtrees are valid, return true.
+
+
+Code - 
+
+public class Solution {
+    public int isValidBST(TreeNode A) {
+
+        return validateTree(A, Long.MIN_VALUE, Long.MAX_VALUE) ? 1:0;
+    }
+
+
+    public boolean validateTree(TreeNode root, long min, long max){
+
+        if( root == null) return true;
+
+        if( root.val <= min || root.val >= max){
+            return false;
+        }
+
+        boolean f1 = validateTree(root.left, min, root.val);
+        boolean f2 = validateTree(root.right, root.val, max);
+
+        return f1 && f2;
+
+    }
+
+
+}
+
+
+

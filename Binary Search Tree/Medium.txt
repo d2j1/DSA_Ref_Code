@@ -1,0 +1,104 @@
+
+Q - Sorted Array To Balanced BST
+
+Problem Description
+
+Given an array where elements are sorted in ascending order, convert it to a height Balanced Binary Search Tree (BBST).
+
+Balanced tree : a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+
+
+Problem Constraints
+
+1 <= length of array <= 100000
+
+
+
+Input Format
+
+First argument is an integer array A.
+
+
+
+Output Format
+
+Return a root node of the Binary Search Tree.
+
+
+
+Example Input
+
+Input 1:
+
+ A : [1, 2, 3]
+Input 2:
+
+ A : [1, 2, 3, 5, 10]
+
+
+ 
+Approach - 
+
+
+Intuition and Approach
+
+The sorted nature of the array gives a key insight:
+
+Inorder traversal of a BST yields a sorted sequence.
+Hence, if we take the middle element as the root,
+its left side will automatically form the left subtree (smaller elements),
+and right side will form the right subtree (larger elements).
+
+Steps
+
+Base Case:
+
+If the array range is empty (start > end), return null.
+
+Find Middle Element:
+
+mid = (start + end) / 2
+
+Create a node with value A[mid].
+
+Recursive Construction:
+
+Left subtree = build from A[start … mid-1]
+
+Right subtree = build from A[mid+1 … end]
+
+Return Root Node.
+
+
+Time Complexity: O(N) — each element used exactly once.
+
+Space Complexity: O(log N) — recursion stack (height of tree).
+
+
+
+Code - 
+
+public class Solution {
+    // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
+    public TreeNode sortedArrayToBST(final int[] A) {
+        return build( A, 0 , A.length-1);
+    }
+
+    public TreeNode build(int[] A, int start, int end){
+
+        if( start > end){
+            return null;
+        }
+
+        int mid = (start + end)/2;
+
+        TreeNode node = new TreeNode(A[mid]);
+
+        node.left = build(A, start, mid-1);
+        node.right = build(A, mid+1, end);
+
+        return node;
+    }
+}
+
