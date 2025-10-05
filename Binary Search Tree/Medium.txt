@@ -102,3 +102,161 @@ public class Solution {
     }
 }
 
+Q -  Delete a node in BST
+
+
+Problem Description
+
+Given a Binary Search Tree(BST) A. If there is a node with value B present in the tree delete it and return the tree.
+
+Note - If there are multiple options, always replace a node by its in-order predecessor
+
+
+Problem Constraints
+
+2 <= No. of nodes in BST <= 105
+1 <= value of nodes <= 109
+Each node has a unique value
+
+
+Input Format
+
+The first argument is the root node of a Binary Search Tree A.
+The second argument is the value B.
+
+
+Output Format
+
+Delete the given node if found and return the root of the BST.
+
+Approach -
+
+There are 3 possible cases when deleting a node:
+
+ Case 1: Node is a Leaf Node (no children)
+
+Simply delete the node — i.e., return null for that branch.
+
+     5
+    /
+   3       ← delete(3)
+→ becomes
+     5
+
+ Case 2: Node has Only One Child
+
+Replace the node with its only child.
+
+     5
+    /
+   3
+    \
+     4    ← delete(3)
+→ becomes
+     5
+    /
+   4
+
+ Case 3: Node has Two Children
+
+This is the tricky case.
+
+You have two options:
+
+Replace node with inorder successor (minimum in right subtree)
+
+Or replace node with inorder predecessor (maximum in left subtree)
+
+ The problem specifically says to use the inorder predecessor.
+
+So steps:
+
+Find the maximum node in the left subtree → inorder predecessor.
+
+Copy its value into the current node.
+
+Delete that predecessor node recursively from the left subtree.
+
+ Approach Summary
+
+Traverse the BST to find the node with value B.
+
+If B < root.val, go left.
+
+If B > root.val, go right.
+
+If B == root.val, we found the node to delete.
+
+Apply deletion logic:
+
+No child → return null
+
+One child → return that child
+
+Two children:
+
+Find inorder predecessor (max in left subtree)
+
+Copy its value into the current node
+
+Recursively delete that predecessor from the left subtree
+
+Return the root after modifications.
+
+Code - 
+
+public class Solution {
+    public TreeNode solve(TreeNode A, int B) {
+
+        if( A == null) return null;
+
+        if( B < A.val){
+            A.left = solve( A.left, B);
+        }else if( B > A.val){
+            A.right = solve(A.right, B);
+        }else{
+
+            // node found
+
+            // case 1 - no children
+            if( A.left == null && A.right == null){
+                return null;
+            }
+
+            // case 2 - one child
+
+            else if( A.left == null){
+                return A.right;
+            }else if(  A.right == null){
+                return A.left;
+            }
+
+            // case 3 - two childrens
+
+            else{
+
+                TreeNode predecessor = findMaxOnLeft(A.left);
+                A.val = predecessor.val;
+                A.left = solve( A.left, predecessor.val); // delete predecessor
+            }
+
+        }
+
+        return A;
+
+
+        }
+    
+
+    public TreeNode findMaxOnLeft(TreeNode node){
+        while(node.right != null ){
+            node = node.right;
+        }
+
+        return node;
+    }
+
+
+}
+
+

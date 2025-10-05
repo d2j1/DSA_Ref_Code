@@ -110,3 +110,75 @@ public class Solution {
 
 
 
+Q - Search in BST
+
+Problem Description
+
+Given a Binary Search Tree A. Check whether there exists a node with value B in the BST.
+
+
+Problem Constraints
+
+1 <= Number of nodes in binary tree <= 105
+
+0 <= B <= 106
+
+
+
+Input Format
+
+First argument is a root node of the binary tree, A.
+
+Second argument is an integer B.
+
+
+
+Output Format
+
+Return 1 if such a node exist and 0 otherwise
+
+Appraoch - 
+
+Search in BST (returning boolean)
+
+We’ll use the same BST property:
+
+If the target B is smaller than the current node’s value, search in the left subtree.
+
+If larger, search in the right subtree.
+
+If equal, return true.
+
+If you reach a null node, it means the value doesn’t exist → return false.
+
+
+Code - 
+
+
+public class Solution {
+    public int solve(TreeNode A, int B) {
+
+        return search(A, B) ? 1 :0;
+    }
+
+    public boolean search(TreeNode node, int target){
+
+        if(node == null){
+            return false;
+        }
+
+        if(node.val == target ){
+            return true;
+        }
+        
+         if(  target < node.val){
+            return search(node.left, target);
+        }else{
+            return search(node.right, target);
+        }
+
+
+    }
+}
+
+
