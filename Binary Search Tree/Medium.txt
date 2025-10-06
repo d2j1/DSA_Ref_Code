@@ -260,3 +260,451 @@ public class Solution {
 }
 
 
+Q - Two Sum BST  (Hard)
+
+
+Problem Description
+
+Given a binary search tree A, where each node contains a positive integer, and an integer B, you have to find whether or not there exist two different nodes X and Y such that X.value + Y.value = B.
+
+Return 1 to denote that two such nodes exist. Return 0, otherwise.
+
+
+
+Problem Constraints
+
+1 <= size of tree <= 100000
+
+1 <= B <= 109
+
+
+
+Input Format
+
+First argument is the head of the tree A.
+
+Second argument is the integer B.
+
+
+
+Output Format
+
+Return 1 if such a pair can be found, 0 otherwise.
+
+
+
+Example Input
+
+Input 1:
+
+         10
+         / \
+        9   20
+
+B = 19
+Input 2:
+
+ 
+          10
+         / \
+        9   20
+
+B = 40
+
+
+Example Output
+
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+
+Explanation 1:
+
+ 10 + 9 = 19. Hence 1 is returned.
+Explanation 2:
+
+ No such pair exists.
+
+
+ Approach - 
+
+ 
+BF - 
+
+
+Do inorder traversal of the tree, we will get sorted array of BST node values. Now use two pointer to find out two node sums - 
+
+i=0, j=n-1
+
+while( i <= j ){
+	
+	if( A[i] + A[j] == target) return 1;
+	
+	
+	if( A[i] + A[j] > target){
+	j--;
+	}else {
+	i++;
+	}
+
+}
+
+return 0;
+
+
+TC - O(N)
+SC - O(N)
+
+
+Optimized - 
+
+Using the BST iterator.
+
+This code uses two stacks to simulate two BST iterators —
+
+One moves from smallest to largest (inorder traversal)
+
+The other moves from largest to smallest (reverse inorder traversal)
+
+This is the space-optimized O(H) approach — but implemented manually, without defining a separate iterator class.
+
+⚙️ Step-by-Step Explanation
+1. Two stacks for two directions
+Stack<TreeNode> stack1 = new Stack<>();
+Stack<TreeNode> stack2 = new Stack<>();
+TreeNode current1 = A;  // For normal inorder (ascending)
+TreeNode current2 = A;  // For reverse inorder (descending)
+
+
+stack1 and current1: used to traverse inorder (smallest → largest)
+
+stack2 and current2: used to traverse reverse inorder (largest → smallest)
+
+These two will act like left and right pointers in a sorted array.
+
+2. The Outer While Loop
+while (((stack1.size() > 0) || current1 != null) || (stack2.size() > 0) || current2 != null)
+
+
+This continues as long as either iterator still has nodes left to process.
+
+3. Building the Iterators
+if (current1 != null || current2 != null) {
+    if (current1 != null) {
+        stack1.push(current1);
+        current1 = current1.left; // go left for inorder
+    }
+    if (current2 != null) {
+        stack2.push(current2);
+        current2 = current2.right; // go right for reverse inorder
+    }
+}
+
+
+This part pushes nodes along both traversal directions:
+
+For inorder (smallest): keep pushing left nodes.
+
+For reverse inorder (largest): keep pushing right nodes.
+
+So after this step:
+
+The top of stack1 is the next smallest element
+
+The top of stack2 is the next largest element
+
+4. When both currents are null
+
+When both traversal fronts reach a leaf (i.e., current1 == null and current2 == null), we’ve reached valid candidate nodes from both ends.
+
+TreeNode node1 = stack1.peek();
+TreeNode node2 = stack2.peek();
+
+
+node1 is the current smallest unprocessed node,
+node2 is the current largest unprocessed node.
+
+5. Compute the sum
+int sum = node1.val + node2.val;
+
+
+Now check:
+
+If both nodes are the same → we can’t use the same node twice → return 0.
+
+If sum == B → found the pair → return 1.
+
+If sum < B → need a larger value → move the inorder iterator forward.
+
+If sum > B → need a smaller value → move the reverse inorder iterator backward.
+
+6. Move the appropriate iterator
+
+If the sum is smaller:
+
+stack1.pop();
+current1 = node1.right; // move inorder forward (to next greater)
+
+
+If the sum is greater:
+
+stack2.pop();
+current2 = node2.left; // move reverse inorder backward (to next smaller)
+
+
+These steps continue until either:
+
+A valid pair is found → return 1
+
+Both iterators cross → loop ends → return 0
+
+🧩 Dry Run Example
+
+Tree:
+
+        10
+       /  \
+      9   20
+B = 19
+
+Initialization
+
+stack1 = [], stack2 = []
+
+current1 = 10, current2 = 10
+
+Step 1: Push left (for inorder) and right (for reverse inorder)
+
+Push 10 → go left → push 9 (stack1 = [10, 9])
+
+Push 10 → go right → push 20 (stack2 = [10, 20])
+
+Now:
+
+node1 = 9 (peek of stack1)
+
+node2 = 20 (peek of stack2)
+
+sum = 9 + 20 = 29 > 19
+
+→ sum > B → move reverse inorder:
+
+Pop 20 → current2 = 20.left = null
+
+Step 2:
+
+node1 = 9, node2 = 10
+
+sum = 9 + 10 = 19 ✅
+→ return 1
+
+
+Code - 
+
+
+public class Solution {
+    public int t2Sum(TreeNode A, int B) {
+        Stack<TreeNode> stack1 = new Stack<TreeNode>();
+        Stack<TreeNode> stack2 = new Stack<TreeNode>();
+        TreeNode current1 = A;
+        TreeNode current2 = A;
+
+        while (((stack1.size() > 0) || current1 != null) || (stack2.size() > 0) || current2 != null) {
+            if (current1 != null || current2 != null) {
+                if (current1 != null) {
+                    stack1.push(current1);
+                    current1 = current1.left;
+                }
+                if (current2 != null) {
+                    stack2.push(current2);
+                    current2 = current2.right;
+                }
+            } else {
+                if (stack1.size() == 0 || stack2.size() == 0)
+                    break;
+                TreeNode node1 = stack1.peek();
+                TreeNode node2 = stack2.peek();
+
+                int sum = node1.val + node2.val;
+                if (node1.val == node2.val) {
+                    return 0;
+                } else if (sum == B)
+                    return 1;
+                else if (sum < B) {
+                    stack1.pop();
+                    current1 = node1.right;
+                } else {
+                    stack2.pop();
+                    current2 = node2.left;
+                }
+            }
+        }
+        return 0;
+    }
+}
+
+
+Q - Check for BST with One Child
+
+
+Problem Description
+
+Given preorder traversal of a binary tree, check if it is possible that it is also a preorder traversal of a Binary Search Tree (BST), where each internal node (non-leaf nodes) have exactly one child.
+
+
+
+Problem Constraints
+
+1 <= number of nodes <= 100000
+
+
+
+Input Format
+
+First and only argument is an integer array denoting the preorder traversal of binary tree.
+
+
+
+Output Format
+
+Return a string "YES" if true else "NO".
+
+
+
+Example Input
+
+Input 1:
+
+ A : [4, 10, 5, 8]
+Input 2:
+
+ A : [1, 5, 6, 4]
+
+
+Example Output
+
+Output 1:
+
+ "YES"
+Output 2:
+
+ "NO"
+
+
+Example Explanation
+
+Explanation 1:
+
+ The possible BST is:
+            4
+             \
+             10
+             /
+             5
+              \
+              8
+Explanation 2:
+
+ There is no possible BST which have the above preorder traversal.
+
+
+ Approach - 
+
+ In a BST:
+
+Left subtree values < root
+
+Right subtree values > root
+
+In preorder traversal (Root → Left → Right),
+for a BST where each node has only one child, all nodes except the last will have exactly one subtree (either left or right).
+
+That means:
+
+The next node in preorder will always lie in the same direction (either all smaller or all greater) compared to future nodes.
+
+So, for every node, all subsequent nodes in preorder must be either:
+
+All greater than it (if it has only right child), or
+
+All smaller than it (if it has only left child).
+
+💡 Core Observation
+
+For such a tree to be valid:
+
+Each element (except the last) must have the next element either greater or smaller,
+and all remaining elements must lie on the same side relative to it.
+
+Example:
+
+A = [4, 10, 5, 8]
+
+
+✅ Check manually:
+
+For 4 → next = 10 (>4), last = 8 (>4) → same side ✅
+
+For 10 → next = 5 (<10), last = 8 (<10) → same side ✅
+
+For 5 → next = 8 (>5), last = 8 (>5) → same side ✅
+Hence “YES”.
+
+⚙️ Efficient Approach (O(N), O(1) Space)
+
+We can check using range tracking as we move through the preorder.
+
+Intuition:
+
+Keep track of the allowed range (min, max) for node values as we simulate preorder traversal.
+
+Initially:
+
+min = Integer.MIN_VALUE
+
+max = Integer.MAX_VALUE
+
+For every next value in preorder:
+
+If it’s less than current value, we move left → update max = current
+
+If it’s greater than current value, we move right → update min = current
+
+If a value violates min < val < max, then BST rule breaks → return “NO”.
+
+If we reach the end → “YES”.
+
+
+Code - 
+
+  public String solve(int[] A) {
+
+              int n = A.length;
+        if (n <= 2) return "YES"; // With <=2 nodes, always valid
+        
+        int min = Integer.MIN_VALUE;
+        int max = Integer.MAX_VALUE;
+        
+        for (int i = 1; i < n; i++) {
+            if (A[i] < A[i - 1]) {
+                // Moving to left subtree
+                if (A[i] < min) return "NO";
+                max = A[i - 1];
+            } else {
+                // Moving to right subtree
+                if (A[i] > max) return "NO";
+                min = A[i - 1];
+            }
+        }
+        
+        return "YES";
+    }
+
+    
+
