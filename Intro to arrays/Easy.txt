@@ -1,0 +1,196 @@
+
+Q - Good Pair
+
+Problem Description
+
+Given an array A and an integer B. A pair(i, j) in the array is a good pair if i != j and (A[i] + A[j] == B). Check if any good pair exist or not.
+
+
+
+Problem Constraints
+
+1 <= A.size() <= 104
+
+1 <= A[i] <= 109
+
+1 <= B <= 109
+
+
+
+Input Format
+
+First argument is an integer array A.
+
+Second argument is an integer B.
+
+
+
+Output Format
+
+Return 1 if good pair exist otherwise return 0.
+
+
+
+Example Input
+
+Input 1:
+
+A = [1,2,3,4]
+B = 7
+Input 2:
+
+A = [1,2,4]
+B = 4
+Input 3:
+
+A = [1,2,2]
+B = 4
+
+
+Example Output
+
+Output 1:
+
+1
+Output 2:
+
+0
+Output 3:
+
+1
+
+
+Example Explanation
+
+Explanation 1:
+
+ (i,j) = (3,4)
+Explanation 2:
+
+No pair has sum equal to 4.
+Explanation 3:
+
+ (i,j) = (2,3)
+
+
+ Approach - 
+
+ BF - iterate array twice and find out the pair.
+
+ Code - 
+
+   public int solve(int[] A, int B) {
+
+        for( int i=0; i<A.length; i++){
+            
+            for( int j=0; j<A.length; j++){
+
+                if( i==j)
+                continue;
+
+                if( A[i]+A[j] == B)
+                return  1;
+            }
+        }
+
+        return 0;
+    }
+
+
+Optimised - 
+
+Sort the array A in increasing order.
+For each i from 0 to n-1 find the first element 
+in the array having a value greater 
+than or equal to B-A[i] using binary search.
+
+TC - nlogn
+
+Q - Reverse in a range
+
+Problem Description
+
+Given an array A of N integers and also given two integers B and C. Reverse the elements of the array A within the given inclusive range [B, C].
+
+
+Problem Constraints
+
+1 <= N <= 105
+1 <= A[i] <= 109
+0 <= B <= C <= N - 1
+
+
+Input Format
+
+The first argument A is an array of integer.
+The second and third arguments are integers B and C
+
+
+Output Format
+
+Return the array A after reversing in the given range.
+
+
+Example Input
+
+Input 1:
+
+A = [1, 2, 3, 4]
+B = 2
+C = 3
+Input 2:
+
+A = [2, 5, 6]
+B = 0
+C = 2
+
+
+Example Output
+
+Output 1:
+
+[1, 2, 4, 3]
+Output 2:
+
+[6, 5, 2]
+
+
+Example Explanation
+
+Explanation 1:
+
+We reverse the subarray [3, 4].
+Explanation 2:
+
+We reverse the entire array [2, 5, 6].
+
+
+Approach - 
+
+We can initialise two variable i and j with B and C.
+We will iterate till i < j, swapping A[i] and A[j]
+in every step and then incrementing i and decrementing j.
+
+Time Complexity : O(N)
+Space Complexity : O(1)
+
+Code - 
+
+   public int[] solve(int[] A, int B, int C) {
+
+      
+        int l=B;
+        int r=C;
+
+        while( l < r){
+            int temp = A[l];
+            A[l]=A[r];
+            A[r] = temp;
+            l++;
+            r--;
+        }
+
+        return A;
+    }
+
+    
