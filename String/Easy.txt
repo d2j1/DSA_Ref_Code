@@ -1,0 +1,672 @@
+Q - Toggle Case
+
+Problem Description
+
+You are given a character string A having length N, consisting of only lowercase and uppercase latin letters.
+
+You have to toggle case of each character of string A. For e.g 'A' is changed to 'a', 'e' is changed to 'E', etc.
+
+
+
+Problem Constraints
+
+1 <= N <= 105
+
+A[i] ∈ ['a'-'z', 'A'-'Z']
+
+
+
+Input Format
+
+First and only argument is a character string A.
+
+
+
+Output Format
+
+Return a character string.
+
+
+
+Example Input
+
+Input 1:
+
+ A = "Hello" 
+Input 2:
+
+ A = "tHiSiSaStRiNg" 
+
+
+Example Output
+
+Output 1:
+
+ hELLO 
+Output 2:
+
+ ThIsIsAsTrInG 
+
+
+Example Explanation
+
+Explanation 1:
+
+ 'H' changes to 'h'
+ 'e' changes to 'E'
+ 'l' changes to 'L'
+ 'l' changes to 'L'
+ 'o' changes to 'O'
+Explanation 2:
+
+ "tHiSiSaStRiNg" changes to "ThIsIsAsTrInG".
+
+
+ code - 
+
+  public String solve(String A) {
+        
+        StringBuilder ans = new StringBuilder();
+
+        for( int i=0; i<A.length(); i++){
+            int temp = (int) A.charAt(i);
+
+            if( temp >= 65 && temp <= 90 ){
+                ans.append((char) (temp+32));
+            }else{
+                ans.append((char) (temp-32));
+            }
+        }
+
+        return ans.toString();
+    }
+
+
+
+Q - Simple Reverse
+
+Problem Description
+
+Given a string A, you are asked to reverse the string and return the reversed string.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 105
+
+String A consist only of lowercase characters.
+
+
+
+Input Format
+
+First and only argument is a string A.
+
+
+
+Output Format
+
+Return a string denoting the reversed string.
+
+
+
+Example Input
+
+Input 1:
+
+ A = "scaler"
+Input 2:
+
+ A = "academy"
+
+
+Example Output
+
+Output 1:
+
+ "relacs"
+Output 2:
+
+ "ymedaca"
+
+
+Example Explanation
+
+Explanation 1:
+
+ Reverse the given string.
+
+
+ code - 
+
+
+  public String solve(String A) {
+
+        char[] chars = A.toCharArray();
+
+        int i=0, j=chars.length-1;
+
+        while( i <=j){
+            char temp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = temp;
+            i++;
+            j--;
+        }
+
+        return new String(chars);
+    }
+
+
+Q - Reverse the String word by word
+
+    Problem Description
+
+You are given a string A of size N.
+
+
+Return the string A after reversing the string word by word.
+
+NOTE:
+
+A sequence of non-space characters constitutes a word.
+Your reversed string should not contain leading or trailing spaces, even if it is present in the input string.
+If there are multiple spaces between words, reduce them to a single space in the reversed string.
+
+
+
+Problem Constraints
+
+1 <= N <= 3 * 105
+
+
+
+Input Format
+
+The only argument given is string A.
+
+
+
+Output Format
+
+Return the string A after reversing the string word by word.
+
+
+
+Example Input
+
+Input 1:
+A = "the sky is blue"
+Input 2:
+A = "this is ib"
+
+
+Example Output
+
+Output 1:
+"blue is sky the"
+Output 2:
+"ib is this"    
+
+
+Example Explanation
+
+Explanation 1:
+We reverse the string word by word so the string becomes "blue is sky the".
+Explanation 2:
+We reverse the string word by word so the string becomes "ib is this".
+
+Code - 
+
+public String solve(String A) {
+        Stack<String> st = new Stack<>();
+        for(int i=0;i<A.length();i++){
+            String word="";
+            while(A.charAt(i)!=' ' && i<A.length()){
+                word+=A.charAt(i);
+                i++;
+            }
+            if(word.equals("")){
+                continue;
+            }
+            st.push(word);
+        }
+        String ans="";
+        while(!st.empty()){
+            ans+=st.peek();
+            st.pop();
+            
+            if(st.empty()){
+                continue;
+            }
+            ans+=" ";
+        }
+        return ans;
+    }
+
+Q - Longest Common Prefix
+
+Problem Description
+
+Given the array of strings A, you need to find the longest string S, which is the prefix of ALL the strings in the array.
+
+
+The longest common prefix for a pair of strings S1 and S2 is the longest string S which is the prefix of both S1 and S2.
+
+Example: the longest common prefix of "abcdefgh" and "abcefgh" is "abc".
+
+
+
+
+Problem Constraints
+
+0 <= sum of length of all strings <= 1000000
+
+
+
+Input Format
+
+The only argument given is an array of strings A.
+
+
+
+Output Format
+
+Return the longest common prefix of all strings in A.
+
+
+
+Example Input
+
+Input 1:
+
+
+A = ["abcdefgh", "aefghijk", "abcefgh"]
+Input 2:
+
+A = ["abab", "ab", "abcd"];
+
+
+
+
+
+
+Example Output
+
+Output 1:
+
+"a"
+Output 2:
+
+"ab"
+
+
+Example Explanation
+
+Explanation 1:
+
+Longest common prefix of all the strings is "a".
+Explanation 2:
+
+Longest common prefix of all the strings is "ab".
+
+Approach - Note: the prefix has to be the prefix of ALL the strings.
+
+So, you can pick any random string from the array and start checking its characters from the beginning to see if they can be a part of the common substring.
+
+
+Code - 
+
+    public String longestCommonPrefix(String[] A) {
+
+        if(A.length == 0){
+            return "";
+        }
+
+        if(A.length == 1){
+            return A[0];
+        }
+
+        String shortStr = A[0];
+
+        for( int i=1; i< A.length; i++){
+            
+            if(shortStr.length() > A[i].length() ){
+                shortStr = A[i];
+            }
+        }
+
+        int j=0;
+        boolean isBreaked =false;
+
+        for( j=0; j< shortStr.length(); j++){
+
+            char temp = shortStr.charAt(j);
+
+            for( int i=0;i<A.length; i++){
+
+                if( A[i].charAt(j) != temp){
+                    isBreaked = true;
+                    break;
+                }
+            }
+
+            if(isBreaked){
+                break;
+            }
+        }
+        return shortStr.substring(0, j);
+    }
+
+
+Q - Count Occurrences
+
+Problem Description
+
+Find the number of occurrences of bob in string A consisting of lowercase English alphabets.
+
+
+
+Problem Constraints
+
+1 <= |A| <= 1000
+
+
+Input Format
+
+The first and only argument contains the string A, consisting of lowercase English alphabets.
+
+
+Output Format
+
+Return an integer containing the answer.
+
+
+Example Input
+
+Input 1:
+
+  "abobc"
+Input 2:
+
+  "bobob"
+
+
+Example Output
+
+Output 1:
+
+  1
+Output 2:
+
+  2
+
+
+Example Explanation
+
+Explanation 1:
+
+  The only occurrence is at second position.
+Explanation 2:
+
+  Bob occures at first and third position.
+
+
+  Code - 
+
+    public int solve(String A) {
+
+        if( A.length() <= 2){
+            return 0;
+        }
+
+
+        int i =0;
+        int n = A.length();
+
+        int ans=0;
+
+        while(i<n){
+
+            if(A.charAt(i) == 'b' && i+2 < n){
+            
+                    if( A.charAt(i+1) == 'o' && A.charAt(i+2) == 'b'){
+                        ans++;                       
+                    }
+
+            }
+            i++;
+
+
+        }
+
+        return ans;
+    }
+
+Q - Amazing Subarrays
+
+You are given a string S, and you have to find all the amazing substrings of S.
+
+An amazing Substring is one that starts with a vowel (a, e, i, o, u, A, E, I, O, U).
+
+Input
+
+Only argument given is string S.
+Output
+
+Return a single integer X mod 10003, here X is the number of Amazing Substrings in given the string.
+Constraints
+
+1 <= length(S) <= 1e6
+S can have special characters
+Example
+
+Input
+    ABEC
+
+Output
+    6
+
+Explanation
+    Amazing substrings of given string are :
+    1. A
+    2. AB
+    3. ABE
+    4. ABEC
+    5. E
+    6. EC
+    here number of substrings are 6 and 6 % 10003 = 6.
+
+Code -
+
+   public int solve(String A) {
+
+        int ans=0;
+        int n = A.length();
+        int mod = 10003;
+
+        for( int i=0; i<n; i++){
+            
+            char temp = A.charAt(i);
+
+            if( temp == 'A' || temp == 'a' || temp == 'e' || temp =='E' || temp == 'I' || temp == 'i' || temp == 'o' || temp == 'O' || temp == 'u' || temp == 'U'){
+                ans = ( (ans % mod ) + ((n-i) % mod) ) % mod;
+            }
+        }
+
+        return ans;
+    }
+
+
+Q - Isalnum()
+
+Problem Description
+
+You are given a function isalpha() consisting of a character array A.
+
+
+
+
+
+Return 1 if all the characters of a character array are alphanumeric (a-z, A-Z, and 0-9) else, return 0.
+
+
+
+
+
+Problem Constraints
+
+1 <= |A| <= 105
+
+
+
+Input Format
+
+Only argument is a character array A.
+
+
+
+Output Format
+
+Return 1 if all the characters of the character array are alphanumeric (a-z, A-Z and 0-9), else return 0.
+
+
+
+Example Input
+
+Input 1:
+
+ A = ['S', 'c', 'a', 'l', 'e', 'r', 'A', 'c', 'a', 'd', 'e', 'm', 'y', '2', '0', '2', '0']
+Input 2:
+
+ A = ['S', 'c', 'a', 'l', 'e', 'r', '#', '2', '0', '2', '0']
+¨C49C
+
+
+Example Output
+
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+
+Explanation 1:
+
+ All the characters are alphanumeric.
+Explanation 2:
+
+ All the characters are NOT alphabets i.e ('#').
+
+
+ Code - 
+
+     public int solve(char[] A) {
+
+        for( int i=0; i< A.length; i++){
+
+            char temp  = A[i];
+            if( !( (temp >= 'A' && temp <= 'Z') || (temp >= 'a' && temp <= 'z') || (temp >= '0' && temp <= '9') )){
+                return 0;
+            }
+        }
+        
+        return 1;
+}
+
+
+Q - Length of longest consecutive ones
+
+Given a binary string A. It is allowed to do at most one swap between any 0 and 1. Find and return the length of the longest consecutive 1’s that can be achieved.
+
+
+Input Format
+
+The only argument given is string A.
+Output Format
+
+Return the length of the longest consecutive 1’s that can be achieved.
+Constraints
+
+1 <= length of string <= 1000000
+A contains only characters 0 and 1.
+For Example
+
+Input 1:
+    A = "111000"
+Output 1:
+    3
+
+Input 2:
+    A = "111011101"
+Output 2:
+    7
+
+Approach - 
+
+Create two arrays which store the number of consecutive ones on the right and left of all indexes.
+
+Now, for each index x having character ‘0’, the answer will be the maximum of answer and left consecutive ones of (x-1) + right consecutive ones of (x+1) + 1 if there is extra 1 other then these, else left consecutive ones of (x-1) + right consecutive ones of (x+1)
+
+Time Complexity : O(n)
+Space Complexity : O(n)
+
+Code - 
+
+public int solve(String A) {
+        int n = A.length();
+        int totalOnes = 0;
+        
+        // Count total 1s in the string
+        for (int i = 0; i < n; i++) {
+            if (A.charAt(i) == '1') totalOnes++;
+        }
+
+        // Edge case: All are 1s
+        if (totalOnes == n) return n;
+
+        // Precompute left and right counts of consecutive 1s
+        int[] left = new int[n];
+        int[] right = new int[n];
+        
+        if (A.charAt(0) == '1') left[0] = 1;
+        for (int i = 1; i < n; i++) {
+            if (A.charAt(i) == '1') {
+                left[i] = left[i - 1] + 1;
+            } else {
+                left[i] = 0;
+            }
+        }
+        
+        if (A.charAt(n - 1) == '1') right[n - 1] = 1;
+        for (int i = n - 2; i >= 0; i--) {
+            if (A.charAt(i) == '1') {
+                right[i] = right[i + 1] + 1;
+            } else {
+                right[i] = 0;
+            }
+        }
+
+        int maxOnes = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (A.charAt(i) == '0') {
+                int leftOnes = (i > 0) ? left[i - 1] : 0;
+                int rightOnes = (i < n - 1) ? right[i + 1] : 0;
+                int currentOnes = leftOnes + rightOnes;
+
+                // Add 1 only if we have extra 1 to swap
+                if (currentOnes < totalOnes) currentOnes += 1;
+
+                maxOnes = Math.max(maxOnes, currentOnes);
+            }
+        }
+
+        return maxOnes;
+    }
+

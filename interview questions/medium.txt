@@ -1,0 +1,485 @@
+
+Q - Majority Element
+
+
+Problem Description
+
+Given an array of size N, find the majority element. The majority element is the element that appears more than floor(n/2) times.
+You may assume that the array is non-empty and the majority element always exists in the array.
+
+
+
+Problem Constraints
+
+1 <= N <= 5*105
+1 <= num[i] <= 109
+
+
+Input Format
+
+Only argument is an integer array.
+
+
+Output Format
+
+Return an integer.
+
+
+Example Input
+
+Input 1:
+[2, 1, 2]
+Input 2:
+[1, 1, 1]
+
+
+Example Output
+
+Input 1:
+2
+Input 2:
+1
+
+
+Example Explanation
+
+For Input 1:
+2 occurs 2 times which is greater than 3/2.
+For Input 2:
+ 1 is the only element in the array, so it is majority
+
+Approach - 
+
+If we cancel out each occurrence of an element X with all the other elements that are different from X, then X will exist till the end if it is a majority element.
+Loop through each element and maintain a count of the element that has the potential of being the majority element.
+
+If the next element is the same, then increments the count, otherwise decrements the count.
+If the count reaches 0, then update the potential index to the current element and reset the count to 1.
+
+Code - 
+
+public int majorityElement(int[] nums) {
+        int count = 0;
+        int candidate = 0;
+
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+
+            count += (num == candidate) ? 1 : -1;
+        }
+
+        return candidate;
+    }
+
+Q - Count Increasing Triplets
+
+
+Problem Description
+
+You are given an array A of N elements. Find the number of triplets i,j and k such that i<j<k and A[i]<A[j]<A[k]
+
+
+Problem Constraints
+
+1 <= N <= 103
+1 <= A[i] <= 109
+
+
+Input Format
+
+First argument A is an array of integers.
+
+
+Output Format
+
+Return an integer.
+
+
+Example Input
+
+Input 1:
+A = [1, 2, 4, 3]
+Input 2:
+A = [2, 1, 2, 3]
+
+
+Example Output
+
+Output 1:
+2
+Output 2:
+1
+
+
+Example Explanation
+
+For Input 1:
+The triplets that satisfy the conditions are [1, 2, 3] and [1, 2, 4].
+For Input 2:
+ 
+The triplet that satisfy the conditions is [1, 2, 3].
+
+Approach - 
+
+For every A[i], we calculate no of elements A[j] 
+such that A[j] < A[i] and j < i. 
+Similary, we also calculate the no of elements A[j]
+such that A[j] > A[i] and  j > i.
+Now, the number of triplets with A[i] as the centre is the
+product of the above two calculated values. 
+We can get this count for all the elements and add their total.
+
+Time Complexity : O(N^2)
+Space Complexity : O(1)
+
+code - 
+
+ public int solve(int[] A) {
+
+         int n = A.length;
+        int count = 0;
+
+        for (int j = 1; j < n - 1; j++) {
+            int leftCount = 0;
+            int rightCount = 0;
+
+            // Count elements less than A[j] on the left
+            for (int i = 0; i < j; i++) {
+                if (A[i] < A[j]) {
+                    leftCount++;
+                }
+            }
+
+            // Count elements greater than A[j] on the right
+            for (int k = j + 1; k < n; k++) {
+                if (A[k] > A[j]) {
+                    rightCount++;
+                }
+            }
+
+            count += leftCount * rightCount;
+        }
+
+        return count;
+    }
+
+Q - N/3 Repeat Number
+
+Problem Description
+
+You're given a read-only array of N integers. Find out if any integer occurs more than N/3 times in the array in linear time and constant additional space.
+If so, return the integer. If not, return -1.
+
+If there are multiple solutions, return any one.
+
+Note: Read-only array means that the input array should not be modified in the process of solving the problem
+
+
+
+Problem Constraints
+
+1 <= N <= 7*105
+1 <= A[i] <= 109
+
+
+Input Format
+
+The only argument is an integer array A.
+
+
+Output Format
+
+Return an integer.
+
+
+Example Input
+
+Input 1:
+[1 2 3 1 1]
+Input 2:
+[1 2 3]
+
+
+Example Output
+
+Output 1:
+1
+Output 2:
+-1
+
+
+Example Explanation
+
+Explanation 1:
+1 occurs 3 times which is more than 5/3 times.
+Explanation 2:
+No element occurs more than 3 / 3 = 1 times in the array.
+
+
+Approach - 
+
+It is important to note that if at a given time, you have 3 distinct element from the array, if you remove them from the array, your answer does not change.
+
+Assume that we maintain 2 elements’ counts as we traverse along the array.
+
+When we encounter a new element, there are 3 cases possible :
+
+We don’t have 2 elements yet. So add this to the list with count as 1.
+
+This element is different from the existing 2 elements. As we said before, we have 3 distinct numbers now. Removing them does not change the answer. So decrement 1 from count of 2 existing elements. If their count falls to 0, obviously its not a part of 2 elements anymore.
+
+The new element is same as one of the 2 elements. Increment the count of that element.
+
+Consequently, the answer will be one of the 2 elements left behind. If they are not the answer, there is no element with count > N / 3.
+
+Code - 
+
+ public int repeatedNumber(int[] A) {
+
+         
+        int n = A.length;
+
+        // Step 1: Find potential candidates
+        int candidate1 = -1, candidate2 = -1;
+        int count1 = 0, count2 = 0;
+
+        for (int num : A) {
+            if (num == candidate1) {
+                count1++;
+            } else if (num == candidate2) {
+                count2++;
+            } else if (count1 == 0) {
+                candidate1 = num;
+                count1 = 1;
+            } else if (count2 == 0) {
+                candidate2 = num;
+                count2 = 1;
+            } else {
+                count1--;
+                count2--;
+            }
+        }
+
+        // Step 2: Verify the candidates
+        count1 = 0;
+        count2 = 0;
+
+        for (int num : A) {
+            if (num == candidate1) count1++;
+            else if (num == candidate2) count2++;
+        }
+
+        if (count1 > n / 3) return candidate1;
+        if (count2 > n / 3) return candidate2;
+
+        return -1;
+    }
+        
+Q - Check anagrams
+
+Problem Description
+
+You are given two lowercase strings A and B each of length N. Return 1 if they are anagrams to each other and 0 if not.
+
+Note : Two strings A and B are called anagrams to each other if A can be formed after rearranging the letters of B.
+
+
+Problem Constraints
+
+1 <= N <= 105
+A and B are lowercase strings
+
+
+Input Format
+
+Both arguments A and B are a string.
+
+
+Output Format
+
+Return 1 if they are anagrams and 0 if not
+
+
+Example Input
+
+Input 1:
+A = "cat"
+B = "bat"
+Input 2:
+A = "secure"
+B = "rescue"
+
+
+Example Output
+
+Output 1:
+0
+Output 2:
+1
+
+
+Example Explanation
+
+For Input 1:
+The words cannot be rearranged to form the same word. So, they are not anagrams.
+For Input 2:
+They are an anagram.
+
+Appraoch - 
+
+If the two string A and B are anagrams, then the frequncy of each
+character in both the strings must be same. So we can keep an array of 
+size 26 to calculate the frequency of each characters for each of the strings.
+Finally, we will compare the two frequency arrays. If they are equal, then the
+strings are anagrams.
+
+Time Complexity : O(N)
+Space Complexity : O(26)
+
+Code - 
+public int solve(String A, String B) {
+
+         if (A.length() != B.length()) {
+            return 0;
+        }
+
+        int[] count = new int[26];
+
+        for (int i = 0; i < A.length(); i++) {
+            count[A.charAt(i) - 'a']++;  
+            count[B.charAt(i) - 'a']--; 
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (count[i] != 0) {
+                return 0;  // Mismatch in frequency
+            }
+        }
+
+        return 1; 
+
+
+    }
+
+
+Q - Colorful Number
+
+
+Problem Description
+
+Given a number A, find if it is COLORFUL number or not.
+
+If number A is a COLORFUL number return 1 else, return 0.
+
+What is a COLORFUL Number:
+
+A number can be broken into different consecutive sequence of digits. 
+The number 3245 can be broken into sequences like 3, 2, 4, 5, 32, 24, 45, 324, 245 and 3245. 
+This number is a COLORFUL number, since the product of every consecutive sequence of digits is different
+
+
+
+Problem Constraints
+
+1 <= A <= 2 * 109
+
+
+
+Input Format
+
+The first and only argument is an integer A.
+
+
+
+Output Format
+
+Return 1 if integer A is COLORFUL else return 0.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 23
+Input 2:
+
+ A = 236
+
+
+Example Output
+
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+
+Explanation 1:
+
+ Possible Sub-sequences: [2, 3, 23] where
+ 2 -> 2 
+ 3 -> 3
+ 23 -> 6  (product of digits)
+ This number is a COLORFUL number since product of every digit of a sub-sequence are different. 
+Explanation 2:
+
+ Possible Sub-sequences: [2, 3, 6, 23, 36, 236] where
+ 2 -> 2 
+ 3 -> 3
+ 6 -> 6
+ 23 -> 6  (product of digits)
+ 36 -> 18  (product of digits)
+ 236 -> 36  (product of digits)
+ This number is not a COLORFUL number since the product sequence 23  and sequence 6 is same. 
+
+
+ Appraoch - 
+
+ Iterate over all the consecutive sequence of digits of the number and store the product in a set using hashing.
+If the product is already present in the set at any point then the number is not Colorful.
+Otherwise, it is a Colorful number.
+
+Example:
+
+A = 123
+1 2 3 12 23 123
+1 -> 1
+2 -> 2
+3 -> 3
+12 -> 2  we have already encountered 2 before. Return 0
+
+Time Complexity : O((log10A)2)
+Space Complexity : O((log10A)2)
+
+Code - 
+
+   public int colorful(int A) {
+
+            String numStr = String.valueOf(A);
+        HashSet<Integer> products = new HashSet<>();
+
+        // Generate all contiguous subsequences
+        for (int i = 0; i < numStr.length(); i++) {
+            int product = 1;
+            for (int j = i; j < numStr.length(); j++) {
+                int digit = numStr.charAt(j) - '0';
+                product *= digit;
+
+                // Check if product already seen
+                if (products.contains(product)) {
+                    return 0;
+                }
+                products.add(product);
+            }
+        }
+
+        return 1;
+        
+    }
