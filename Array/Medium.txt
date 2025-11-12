@@ -861,3 +861,597 @@ Code -
 
         return minSwaps;
     }
+
+
+Q -  First Missing Integer
+
+
+Problem Description
+
+Given an unsorted integer array, A of size N. Find the first missing positive integer.
+
+
+
+
+
+Note: Your algorithm should run in O(n) time and use constant space.
+
+
+
+
+
+
+
+Problem Constraints
+
+1 <= N <= 1000000
+
+-109 <= A[i] <= 109
+
+
+
+Input Format
+
+First argument is an integer array A.
+
+
+
+Output Format
+
+Return an integer denoting the first missing positive integer.
+
+
+
+Example Input
+
+Input 1:
+
+[1, 2, 0]
+Input 2:
+
+[3, 4, -1, 1]
+Input 3:
+
+[-8, -7, -6]
+
+
+
+
+
+
+Example Output
+
+Output 1:
+
+3
+Output 2:
+
+2
+Output 3:
+
+1
+
+
+
+
+
+
+Example Explanation
+
+Explanation 1:
+
+A = [1, 2, 0]
+First positive integer missing from the array is 3.
+Explanation 2:
+
+A = [3, 4, -1, 1]
+First positive integer missing from the array is 2.
+Explanation 3:
+
+A = [-8, -7, -6]
+First positive integer missing from the array is 1.
+
+Approach - 
+
+Note: numbers A[i]<=0 and A[i]>N ( N being the size of the array ) are not important to us since the missing positive integer will be in the range [1, N+1].
+
+The answer will be N+1 only if all of the elements of the array are exact one occurrence of [1, N].
+
+Creating buckets would have
+ been an easy solution if using extra space was allowed.
+
+An array of size N initialized to 0 would have been created.
+
+For every value A[i], which lies in the range [1, N], its count in the array would have been incremented.
+
+Finally, traversing the array would help to find the first array position with value 0, and that will be our answer.
+However, usage of buckets is not allowed; can we use the existing array as a bucket somehow?
+
+Now, since additional space is not allowed either, the given array itself needs to be used to track it.
+
+It may be helpful to use the fact that the size of the set we are looking to track is [1, N]
+
+which happens to be the same size as the size of the array.
+
+This means we can use the array to track these elements.
+
+We traverse the array, and if A[i] is in [1, N] range, we try to put in the index of same value in the array.
+
+Time complexity : O(N)
+Auxiliary Space : O(1)
+
+
+Code - 
+
+public int firstMissingPositive(int[] A) {
+
+         int n = A.length;
+
+      
+        for (int i = 0; i < n; i++) {
+            while (A[i] > 0 && A[i] <= n && A[A[i] - 1] != A[i]) {
+             
+                int temp = A[i];
+                A[i] = A[temp - 1];
+                A[temp - 1] = temp;
+            }
+        }
+
+     
+        for (int i = 0; i < n; i++) {
+            if (A[i] != i + 1) {
+                return i + 1;
+            }
+        }
+
+    
+        return n + 1;
+
+    }
+
+
+Q - Merge Sorted Overlapping Intervals - 2
+
+Problem Description
+
+You are given a collection of intervals A in a 2-D array format, where each interval is represented by a pair of integers `[start, end]`. The intervals are sorted based on their start values.
+
+Your task is to merge all overlapping intervals and return the resulting set of non-overlapping intervals.
+
+
+Problem Constraints
+
+1 <= len(A) <= 100000.
+1 <= A[i][0] <= A[i][1] <= 100000
+
+A is sorted based on the start value (A[i][0])
+
+
+
+Input Format
+
+First argument is a list of intervals in 2-Dimentional Array.
+
+
+
+Output Format
+
+Return the sorted list of intervals after merging all the overlapping intervals.
+
+
+
+Example Input
+
+Input 1:
+
+[ [1, 3], [2, 6], [8, 10], [15, 18] ]
+Input 2:
+
+[ [2, 10], [4, 9], [6, 7] ]
+
+
+Example Output
+
+Output 1:
+
+[ [1, 6], [8, 10], [15, 18] ]
+Output 2:
+
+[ [2, 10] ]
+
+
+Example Explanation
+
+Explanation 1:
+
+Merge intervals [1,3] and [2,6] -> [1,6].
+so, the required answer after merging is [1,6],[8,10],[15,18].
+No more overlapping intervals present.
+Explanation 2:
+
+Merge intervals [2, 10], [4, 9], [6, 7] as [2,10].
+Since [4, 9] and [6, 7] is overlapping inside the interval [2, 10].
+
+so, the required answer after merging is [2, 10].
+
+Approach - 
+
+Given all the intervals, you need to figure out the sequence of intervals which intersect.
+
+Lets see how we check if interval 1 (a,b) intersects with interval 2 (c,d):
+
+Overlap case :
+
+a---------------------b          OR             a------b
+            c-------------------d           c------------------d
+Nonoverlap case :
+
+a--------------------b   c------------------d
+If max(a,c) > min(b,d), then the intervals do not overlap. Otherwise, they overlap.
+
+Do you think it will be easier to solve if you could sort the intervals based on the starting point?
+
+First lets sort the array based on the starting point , if starting points are equal then based on ending point.
+We can maintain two variables cur_start and cur_end where cur_start is the left most point of the current segment and cur_end is rightmost point of the current segment.
+Set cur_start to the starting point of the first element and cur_end to the ending point of the first element.
+
+Now we iterate from 1 to n-1 and for every i we check the following
+if A[i][0] <= cur_end
+This means i’th interval overlapps with the current interval, so we can add this to the current interval
+else
+This means the i’th interval doesnt overlapp with the current interval, therefore we can add the current interval to our answer and make a new interval i.e. set cur_start=A[i][0] and cur_end=A[i][1]
+
+Lastly dont forget to add the current interval to our answer.
+
+Time Complexity : O(N)
+Space Complexity : O(N)
+where N is the size of the intervals array
+
+
+Code - 
+
+public int[][] solve(int[][] A) {
+
+        int cs = A[0][0];
+        int ce = A[0][1];
+
+        ArrayList<int[]> ans = new ArrayList<>();
+
+        int j=0;
+
+        for( int i =1; i <A.length; i++){
+            int s = A[i][0];
+            int e = A[i][1];
+
+
+            if( s <= ce){ 
+                // overlap found
+                cs = Math.min(cs, s);
+                ce = Math.max(ce, e);
+
+            }else{
+                
+                ans.add(new int[]{cs, ce});
+                cs = s;
+                ce = e;
+
+            }
+        }
+
+            ans.add(new int[]{cs, ce});
+
+        return ans.toArray(new int[0][]);
+    }
+
+
+Q - Merge Intervals - 2
+
+Problem Description
+
+You have a set of non-overlapping intervals. You are given a new interval [start, end], insert this new interval into the set of intervals (merge if necessary).
+
+You may assume that the intervals were initially sorted according to their start times.
+
+
+
+Problem Constraints
+
+0 <= |intervals| <= 105
+
+
+
+Input Format
+
+First argument is the vector of intervals
+
+second argument is the new interval to be merged
+
+
+
+Output Format
+
+Return the vector of intervals after merging
+
+
+
+Example Input
+
+Input 1:
+
+Given intervals [1, 3], [6, 9] insert and merge [2, 5] .
+Input 2:
+
+Given intervals [1, 3], [6, 9] insert and merge [2, 6] .
+
+
+Example Output
+
+Output 1:
+
+ [ [1, 5], [6, 9] ]
+Output 2:
+
+ [ [1, 9] ]
+
+
+Example Explanation
+
+Explanation 1:
+
+(2,5) does not completely merge the given intervals
+Explanation 2:
+
+(2,6) completely merges the given intervals
+
+
+Approach - 
+
+Have you covered the following corner cases :
+
+1) Size of interval array as 0.
+
+2) newInterval being an interval preceding all intervals in the array.
+
+    Given interval (3,6),(8,10), insert and merge (1,2)
+3) newInterval being an interval succeeding all intervals in the array.
+
+    Given interval (1,2), (3,6), insert and merge (8,10)
+4) newInterval not overlapping with any interval and falling in between 2 intervals in the array.
+
+    Given interval (1,2), (8,10) insert and merge (3,6) 
+5) newInterval covering all given intervals.
+
+    Given interval (3, 5), (7, 9) insert and merge (1, 10)
+Time Complexity: O(N)
+Space Complexity: O(1)
+
+
+Code - 
+
+public int[][] insert(int[][] A, int[] B) {
+
+        int cs = B[0];
+        int ce = B[1];
+
+        ArrayList<int[]> ans = new ArrayList<>();
+
+        for( int i=0; i < A.length; i++){
+            int s = A[i][0];
+            int e = A[i][1];
+
+            if( ce < s){
+                ans.add(new int[]{cs, ce});
+
+                for( int j=i; j<A.length; j++){
+                    ans.add(A[j]);
+                }
+
+                return ans.toArray(new int[0][]);
+            }
+
+            if( e < cs ){
+                ans.add(A[i]);
+            }else {
+                cs = Math.min( cs, s);
+                ce = Math.max(ce, e);
+            }
+        }
+
+        ans.add(new int[]{cs, ce});
+
+        return ans.toArray(new int[0][]);
+    }
+
+
+    Q - Next Permutation
+
+
+Problem Description
+
+Implement the next permutation, which rearranges numbers into the numerically next greater permutation of numbers for a given array A of size N.
+
+
+
+If such arrangement is not possible, it must be rearranged as the lowest possible order, i.e., sorted in ascending order.
+
+NOTE:
+
+
+
+The replacement must be in-place, do not allocate extra memory.
+DO NOT USE LIBRARY FUNCTION FOR NEXT PERMUTATION. Use of Library functions will disqualify your submission retroactively and will give you penalty points.
+
+
+Problem Constraints
+
+1 <= N <= 5 * 105
+
+1 <= A[i] <= 109
+
+
+
+Input Format
+
+The first and the only argument of input has an array of integers, A.
+
+
+
+Output Format
+
+Return an array of integers, representing the next permutation of the given array.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [1, 2, 3]
+Input 2:
+
+ A = [3, 2, 1]
+
+
+Example Output
+
+Output 1:
+
+ [1, 3, 2]
+Output 2:
+
+ [1, 2, 3]
+
+
+Example Explanation
+
+Explanation 1:
+
+ Next permutaion of [1, 2, 3] will be [1, 3, 2].
+Explanation 2:
+
+ No arrangement is possible such that the number are arranged into the numerically next greater permutation of numbers.
+ So will rearranges it in the lowest possible order.
+
+
+ Appraoch - 
+
+ It might help to write down the next permutation on paper to see how and when the sequence changes.
+
+You’ll realize the following pattern :
+
+The suffix which gets affected is in descending order before the change.
+
+A swap with the smaller element happens, and then we reverse the affected suffix.
+
+    1 2 3 -> 1 3 2   // Suffix being just the 3. 
+
+    1 2 3 6 5 4  -> 1 2 4 3 5 6 // Suffix being 6 5 4 in this case. 
+
+
+Code - 
+
+ public int[] nextPermutation(int[] A) {
+
+        int n=A.length;
+        int index=-1;
+
+        // finding the pivot 
+        for( int i = n-2; i >= 0; i--){
+
+            if(A[i] < A[i+1]){
+                index = i;
+                break;
+            }
+        }
+
+        if( index == -1){
+            reverseArray(A, 0, n-1);
+            return A;
+        }
+
+        for( int i = n-1; i >= index; i--){
+            if(A[i] > A[index]){
+                swap(A, i, index);
+                break;
+            }
+        }
+
+        reverseArray(A, index + 1, n-1 );
+        return A;
+    }
+
+    public void swap(int[] A, int i, int j){
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
+
+    public void reverseArray(int[] A, int i, int j){
+
+        while( i <= j){
+
+            int temp = A[i];
+            A[i] = A[j];
+            A[j] = temp;
+            j--;
+            i++;
+        }
+    }
+
+
+Q - Number of Digit One
+
+Problem Description
+
+Given an integer A, find and return the total number of digit 1 appearing in all non-negative integers less than or equal to A.
+
+
+
+Problem Constraints
+
+0 <= A <= 109
+
+
+
+Input Format
+
+The only argument given is the integer A.
+
+
+
+Output Format
+
+Return the total number of digit 1 appearing in all non-negative integers less than or equal to A.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 10
+Input 2:
+
+ A = 11
+
+
+Example Output
+
+Output 1:
+
+ 2
+Output 2:
+
+ 4
+
+
+Example Explanation
+
+Explanation 1:
+
+Digit 1 appears in 1 and 10 only and appears one time in each. So the answer is 2.
+Explanation 2:
+
+Digit 1 appears in 1(1 time) , 10(1 time) and 11(2 times) only. So the answer is 4.
+
+
