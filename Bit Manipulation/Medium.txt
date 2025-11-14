@@ -538,3 +538,280 @@ Explanation 2:
  Approach - 
 
  
+Approach - 
+
+In this question, we will consider every bit as a unique bit, and every bit will have an independent contribution to the answer.
+Thus, we will iterate over the whole array for all bits independently. We will maintain a 2d array BitInfo[bits][index]. The value at any index ind for any bit will signify the next index on which this bit is set.
+Thus after that index, every subarray corresponding to ind will have that bit set. 
+In this manner, the contribution of every bit corresponding to each bit can be determined independently and can be added to the overall answer.
+
+Another way to solve this problem is to iterate over each bit and count the number of subarrays in which it won't contribute.
+After calculating that, we can deduct this from the total count of subarrays(which is the same for each bit).
+To count the number of subarrays in which a bit won't have a contribution, consider the following example for a random bit:
+0 1 1 0 0 0 0 1 1 0 0 1 (0 is for the places where the bit is unset, and 1 is for the places where this bit is set)
+If the starting till ending point of a subarray does not consist of even a single 1, the bit won't contribute to the bitwise OR.
+The number of subarrays that can be formed from an array of size x is x * (x + 1) / 2. So, we can iterate over this binary array
+that we had precomputed for each bit before and applied the formula to get the total number of subarrays where the selected bit does not contribute to bitwise OR.
+
+
+Code - 
+ public int solve(int[] A) {
+        int n = A.length;
+        long result = 0;
+        int MOD = 1_000_000_007;
+
+        Map<Integer, Integer> prev = new HashMap<>();
+        Map<Integer, Integer> curr = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            curr.clear();
+
+            // Start a new subarray from A[i]
+            curr.put(A[i], 1);
+
+            // Extend all subarrays from previous step
+            for (Map.Entry<Integer, Integer> entry : prev.entrySet()) {
+                int newOr = entry.getKey() | A[i];
+                curr.put(newOr, curr.getOrDefault(newOr, 0) + entry.getValue());
+            }
+
+            // Sum contributions from this step
+            for (Map.Entry<Integer, Integer> entry : curr.entrySet()) {
+                result = (result + (1L * entry.getKey() * entry.getValue()) % MOD) % MOD;
+            }
+
+            // Update for next iteration
+            prev = new HashMap<>(curr);
+        }
+
+        return (int) result;
+    }
+
+
+Q -  Strange Equality
+
+Problem Description
+
+Given an integer A.
+Two numbers, X and Y, are defined as follows:
+
+X is the greatest number smaller than A such that the XOR sum of X and A is the same as the sum of X and A.
+Y is the smallest number greater than A, such that the XOR sum of Y and A is the same as the sum of Y and A.
+Find and return the XOR of X and Y.
+
+NOTE 1: XOR of X and Y is defined as X ^ Y where '^' is the BITWISE XOR operator.
+
+NOTE 2: Your code will be run against a maximum of 100000 Test Cases.
+
+
+
+Problem Constraints
+
+1 <= A <= 109
+
+
+
+Input Format
+
+First and only argument is an integer A.
+
+
+
+Output Format
+
+Return an integer denoting the XOR of X and Y.
+
+
+
+Example Input
+
+A = 5
+
+
+Example Output
+
+10
+
+
+Example Explanation
+
+The value of X will be 2 and the value of Y will be 8. The XOR of 2 and 8 is 10.
+
+Approach - 
+
+A + B = (A ^ B) + 2 * (A & B)
+Following the above equation, if xor sum and the sum of 2 numbers are equal, their bitwise AND should be zero.
+Given a number N, how to find a number whose bitwise AND with N is 0?
+Keeping in mind the truth table of AND, 1 & 1 = 1 while 1 & 0 = 0, 0 & 1 = 0 and 0 & 0 = 0.
+Therefore, in the number X such that X & N is 0, all the set bits of number N must be unset in the number X since 1 & 0 = 0.
+The unset bits of N can have any orientation in X, that is, they can either be 0 or be 1.
+So to find the smallest number greater than N, the answer is the next power of 2 greater than N. Think why!!
+And to find the greatest number smaller than N, set all the unset bits of N to 1.
+
+Code - 
+
+ public int solve(int A) {
+
+        int x = 0;
+        int mostSignificantSetBit = 0;
+
+        // Find the most significant set bit
+        for (int i = 30; i >= 0; i--) {
+            if ((A & (1 << i)) != 0) {
+                mostSignificantSetBit = i;
+                break;
+            }
+        }
+
+        // Set bits in x where A has 0s (up to the MSB)
+        for (int i = 0; i <= mostSignificantSetBit; i++) {
+            if ((A & (1 << i)) == 0) {
+                x |= (1 << i);
+            }
+        }
+
+        int y = 1 << (mostSignificantSetBit + 1);
+
+        return x ^ y;
+
+    }
+    
+
+Q -  Sum of Xor of all Pairs
+
+Problem Description
+
+Given an array A of N integers. Find the sum of bitwise XOR all pairs of numbers in the array.
+
+Since the answer can be large, return the remainder after the dividing the answer by 109+7.
+
+
+
+Problem Constraints
+
+1 <= N <= 105
+
+1 <= A[i] < 109
+
+
+
+Input Format
+
+Only argument A is an array of integers
+
+
+
+Output Format
+
+Return an integer denoting the sum of xor of all pairs of number in the array.
+
+
+
+Example Input
+
+Input 1:
+A = [1, 2, 3]
+Input 2:
+A = [3, 4, 2]
+
+
+Example Output
+
+Output 1:
+6
+Output 2:
+14
+
+
+Example Explanation
+
+For Input 1:
+Pair    Xor
+{1, 2}  3
+{1, 3}  2
+{2, 3}  1
+Sum of xor of all pairs = 3 + 2 + 1 = 6.
+For Input 2:
+Pair    Xor
+{3, 4}  7
+{3, 2}  1
+{4, 2}  6
+Sum of xor of all pairs = 7 + 1 + 6 = 14.
+
+
+Approach - 
+
+For every bit, we can find the number of elements in the array 
+with that bit set and the number of elements with that bit unset.
+
+Let the number of elements with i-th bit set and unset be 
+X and Y respectively.
+
+Now the number of xor pairs with the i-th bit set is X*Y. 
+So the total contribution by the i-th bit to the sum of xor
+of all pairs will be (X * Y) * (1 << i).
+
+
+Time Complexity : O(N*logX)
+Space Complexity : O(1)
+
+where X is maximum value from A
+
+Code - 
+
+  public int solve(int[] A) {
+
+            int ans=0;
+            long setCnt=0, unSetCnt=0;
+            int mod = 1000000007;
+            long multiplier=0;
+
+            for( int i =0 ; i < 32; i++){
+                
+                setCnt=0;
+                unSetCnt=0;
+
+                for(int j=0; j < A.length; j++){
+                if( (A[j] & (1 << i)) > 0 ){
+                    setCnt++;
+                }else{
+                    unSetCnt++;
+                }
+                }
+                
+                
+                multiplier = ((1L << i) % mod);
+                long temp = (setCnt * unSetCnt) % mod;
+                temp = (temp * multiplier) % mod;
+                ans = (int)((ans + temp) % mod);
+                
+
+                // ans = (ans % mod + ( (int) ((setCnt * unSetCnt)% mod ) * (int) multiplier ) % mod ) % mod;
+            }
+
+            return ans;
+    }
+
+
+       public int solveBF(int[] A) {
+
+        int ans =0;
+        long tempXor=0;
+
+        int mod = 1000000007;
+        for( int i =0; i< A.length; i++){
+
+            for( int j = i ; j < A.length; j++){
+
+                if( i == j)
+                continue;
+
+                tempXor = ( (A[i] % mod) ^ (A[j] % mod) ) % mod;
+                ans = (ans + (int) tempXor) % mod  ;
+            }
+        }
+
+        return ans;
+    }
+
+    
